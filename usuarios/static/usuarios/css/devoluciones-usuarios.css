@@ -422,25 +422,24 @@
   }
 
   /* Botón de exportar */
-  .btn-export {
-    display: inline-block;
-    padding: 10px 18px;
-    border-radius: 8px;
-    text-decoration: none;
+  .btn-exportar {
+    background: #E5BE01;
     color: #292929;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-    background-color: #E5BE01;
-    cursor: pointer;
-    font-size: 16px;
     border: none;
-    margin-right: 100px;
-    width: 100px;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  .btn-export:hover {
+  .btn-exportar:hover {
     background: #F29727;
-
+    transform: translateY(-2px);
   }
 
   .acciones-superiores {

@@ -161,6 +161,10 @@ if (page) {
             })
             .catch(err => console.error("Error en AJAX:", err));
     }
+    function exportarDevolucionesExcel() {
+    const estado = document.getElementById('estadoFilter')?.value || '';
+    window.location.href = `{% url 'usuarios:exportar_devoluciones_excel' %}?estado=${estado}`;
+}
 } // Fin devoluciones
 
 

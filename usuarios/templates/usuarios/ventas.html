@@ -34,12 +34,12 @@
         <!-- Búsqueda -->
         <div class="busqueda-ventas">
             <div class="export-container-ventas">
-                <button class="btn-export-ventas" id="btnExportar">
-                    <i class="fa fa-file-excel"></i>
-                    Exportar a Excel
-                </button>
+                <a href="{% url 'usuarios:exportar_ventas_excel' %}" class="btn-export-ventas">
+                    <i class="fa fa-file-excel"></i> Exportar a Excel
+                </a>
             </div>
-            <input type="text" class="search-input-ventas" id="searchInput" placeholder="Buscar por ID, cliente o monto...">
+            <input type="text" class="search-input-ventas" id="searchInput"
+                placeholder="Buscar por ID, cliente o monto...">
         </div>
 
 

@@ -55,7 +55,7 @@ h1 {
 }
 
 /* Botón Lote - Estilo Verde */
-.btn-lote {
+.btn-lote{
     background: #1e8449;
     color: white;
     border: none;
@@ -71,13 +71,13 @@ h1 {
     box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
 }
 
-.btn-lote:hover {
-    background: linear-gradient(135deg, #1e8449, #196f3d);
+.btn-lote:hover{
+    background: #196f3d;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
 }
 
-.btn-lote:active {
+.btn-lote:active{
     transform: translateY(0);
 }
 

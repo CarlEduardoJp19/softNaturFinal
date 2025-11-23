@@ -1,7 +1,7 @@
 const page = document.querySelector("[data-page='gst-pedidos']");
 
 if (page) {
-    console.log("JS cargado para gestión de pedidos");
+  console.log("JS cargado para gestión de pedidos");
   function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -245,6 +245,12 @@ if (page) {
       });
     }
   });
+  function exportarPedidosExcel() {
+    const estado = document.getElementById('estadoFilter')?.value || '';
+    const mes = document.getElementById('mesFilter')?.value || '';
+    const anio = document.getElementById('anioFilter')?.value || '';
+    window.location.href = `{% url 'usuarios:exportar_pedidos_excel' %}?estado=${estado}&mes=${mes}&anio=${anio}`;
+  }
 
 }
 
@@ -252,180 +258,120 @@ if (page) {
 const page2 = document.querySelector("[data-page='ventas']");
 
 if (page2) {
-    console.log("JS cargado para gestión de ventas");
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput');
-        const mesFilter = document.getElementById('mesFilter');
-        const anioFilter = document.getElementById('anioFilter');
-        const ventasTable = document.getElementById('ventasTable');
-        const totalVentasElement = document.getElementById('totalVentas');
-        const btnExportar = document.getElementById('btnExportar');
+  console.log("JS cargado para gestión de ventas");
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const mesFilter = document.getElementById('mesFilter');
+    const anioFilter = document.getElementById('anioFilter');
+    const ventasTable = document.getElementById('ventasTable');
+    const totalVentasElement = document.getElementById('totalVentas');
+    const btnExportar = document.getElementById('btnExportar');
 
-        // Llenar el selector de años dinámicamente
-        function populateYears() {
-            const rows = ventasTable.querySelectorAll('tr[data-fecha]');
-            const years = new Set();
+    // Llenar el selector de años dinámicamente
+    function populateYears() {
+      const rows = ventasTable.querySelectorAll('tr[data-fecha]');
+      const years = new Set();
 
-            rows.forEach(row => {
-                const fecha = row.getAttribute('data-fecha');
-                if (fecha) {
-                    const year = fecha.split('-')[0];
-                    years.add(year);
-                }
-            });
+      rows.forEach(row => {
+        const fecha = row.getAttribute('data-fecha');
+        if (fecha) {
+          const year = fecha.split('-')[0];
+          years.add(year);
+        }
+      });
 
-            const sortedYears = Array.from(years).sort((a, b) => b - a);
-            sortedYears.forEach(year => {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = year;
-                anioFilter.appendChild(option);
-            });
+      const sortedYears = Array.from(years).sort((a, b) => b - a);
+      sortedYears.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        anioFilter.appendChild(option);
+      });
+    }
+
+    populateYears();
+
+    // Función para actualizar el total de ventas
+    function updateTotalVentas() {
+      const visibleRows = ventasTable.querySelectorAll('tr[data-monto]:not([style*="display: none"])');
+      let total = 0;
+
+      visibleRows.forEach(row => {
+        const monto = parseFloat(row.getAttribute('data-monto')) || 0;
+        total += monto;
+      });
+
+      // Formatear el total con separadores de miles
+      totalVentasElement.textContent = '$' + total.toLocaleString('es-CO');
+    }
+
+    // Función para aplicar todos los filtros
+    function applyFilters() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const selectedMes = mesFilter.value;
+      const selectedAnio = anioFilter.value;
+      const rows = ventasTable.querySelectorAll('tr[data-search]');
+
+      rows.forEach(row => {
+        const searchText = row.getAttribute('data-search') || '';
+        const fecha = row.getAttribute('data-fecha') || '';
+
+        let showRow = true;
+
+        // Filtro de búsqueda
+        if (searchTerm !== '' && !searchText.includes(searchTerm)) {
+          showRow = false;
         }
 
-        populateYears();
-
-        // Función para actualizar el total de ventas
-        function updateTotalVentas() {
-            const visibleRows = ventasTable.querySelectorAll('tr[data-monto]:not([style*="display: none"])');
-            let total = 0;
-
-            visibleRows.forEach(row => {
-                const monto = parseFloat(row.getAttribute('data-monto')) || 0;
-                total += monto;
-            });
-
-            // Formatear el total con separadores de miles
-            totalVentasElement.textContent = '$' + total.toLocaleString('es-CO');
+        // Filtro de mes
+        if (selectedMes !== '' && fecha) {
+          const mesRow = fecha.split('-')[1];
+          if (mesRow !== selectedMes) {
+            showRow = false;
+          }
         }
 
-        // Función para aplicar todos los filtros
-        function applyFilters() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const selectedMes = mesFilter.value;
-            const selectedAnio = anioFilter.value;
-            const rows = ventasTable.querySelectorAll('tr[data-search]');
-
-            rows.forEach(row => {
-                const searchText = row.getAttribute('data-search') || '';
-                const fecha = row.getAttribute('data-fecha') || '';
-
-                let showRow = true;
-
-                // Filtro de búsqueda
-                if (searchTerm !== '' && !searchText.includes(searchTerm)) {
-                    showRow = false;
-                }
-
-                // Filtro de mes
-                if (selectedMes !== '' && fecha) {
-                    const mesRow = fecha.split('-')[1];
-                    if (mesRow !== selectedMes) {
-                        showRow = false;
-                    }
-                }
-
-                // Filtro de año
-                if (selectedAnio !== '' && fecha) {
-                    const anioRow = fecha.split('-')[0];
-                    if (anioRow !== selectedAnio) {
-                        showRow = false;
-                    }
-                }
-
-                row.style.display = showRow ? '' : 'none';
-            });
-
-            updateTotalVentas();
+        // Filtro de año
+        if (selectedAnio !== '' && fecha) {
+          const anioRow = fecha.split('-')[0];
+          if (anioRow !== selectedAnio) {
+            showRow = false;
+          }
         }
 
-        // Función para exportar a Excel
-        function exportarExcel() {
-            // Obtener solo las filas visibles
-            const visibleRows = ventasTable.querySelectorAll('tr[data-search]:not([style*="display: none"])');
+        row.style.display = showRow ? '' : 'none';
+      });
 
-            if (visibleRows.length === 0) {
-                alert('No hay datos para exportar');
-                return;
-            }
+      updateTotalVentas();
+    }
 
-            // Crear array de datos
-            const data = [];
+    // Función para exportar a Excel
+    function exportarExcel() {
+      const mes = document.getElementById('mesFilter')?.value || '';
+      const anio = document.getElementById('anioFilter')?.value || '';
+      window.location.href = `{% url 'usuarios:exportar_ventas_excel' %}?mes=${mes}&anio=${anio}`;
+    }
 
-            // Agregar encabezados
-            data.push(['ID', 'Cliente', 'Fecha', 'Monto']);
+    // Event listeners
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilters);
+    }
 
-            // Agregar filas visibles
-            visibleRows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                if (cells.length > 0) {
-                    const rowData = [
-                        cells[0].textContent.trim(),
-                        cells[1].textContent.trim(),
-                        cells[2].textContent.trim(),
-                        cells[3].textContent.trim()
-                    ];
-                    data.push(rowData);
-                }
-            });
+    if (mesFilter) {
+      mesFilter.addEventListener('change', applyFilters);
+    }
 
-            // Agregar fila de total
-            const totalText = totalVentasElement.textContent;
-            data.push(['', '', 'TOTAL:', totalText]);
+    if (anioFilter) {
+      anioFilter.addEventListener('change', applyFilters);
+    }
 
-            // Crear libro de trabajo
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(data);
+    if (btnExportar) {
+      btnExportar.addEventListener('click', exportarExcel);
+    }
 
-            // Ajustar ancho de columnas
-            ws['!cols'] = [
-                { wch: 10 },  // ID
-                { wch: 30 },  // Cliente
-                { wch: 15 },  // Fecha
-                { wch: 20 }   // Monto
-            ];
-
-            // Agregar hoja al libro
-            XLSX.utils.book_append_sheet(wb, ws, 'Ventas');
-
-            // Generar nombre del archivo con fecha
-            const fecha = new Date();
-            const nombreMes = mesFilter.options[mesFilter.selectedIndex].text;
-            const anio = anioFilter.value || 'Todos';
-            let nombreArchivo = 'Informe_Ventas';
-
-            if (mesFilter.value) {
-                nombreArchivo += `_${nombreMes}`;
-            }
-            if (anioFilter.value) {
-                nombreArchivo += `_${anio}`;
-            }
-            nombreArchivo += `_${fecha.getDate()}-${fecha.getMonth() + 1}-${fecha.getFullYear()}.xlsx`;
-
-            // Descargar archivo
-            XLSX.writeFile(wb, nombreArchivo);
-        }
-
-        // Event listeners
-        if (searchInput) {
-            searchInput.addEventListener('input', applyFilters);
-        }
-
-        if (mesFilter) {
-            mesFilter.addEventListener('change', applyFilters);
-        }
-
-        if (anioFilter) {
-            anioFilter.addEventListener('change', applyFilters);
-        }
-
-        if (btnExportar) {
-            btnExportar.addEventListener('click', exportarExcel);
-        }
-
-        // Calcular el total inicial
-        updateTotalVentas();
-    });
+    // Calcular el total inicial
+    updateTotalVentas();
+  });
 }
 
 
@@ -435,7 +381,7 @@ if (page2) {
 const page3 = document.querySelector("[data-page='calificaciones']");
 
 if (page3) {
-    console.log("JS cargado para gestión de calificaciones");
+  console.log("JS cargado para gestión de calificaciones");
   document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('searchInput');
     const searchStats = document.getElementById('searchStats');

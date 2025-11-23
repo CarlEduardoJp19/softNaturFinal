@@ -34,6 +34,7 @@ urlpatterns = [
     # Informes
     path('informe-calificaciones/', views.informe_calificaciones, name='informe_calificaciones'),
     path('ventas/', views.informe_ventas, name='informe_ventas'),
+    path('exportar-ventas-excel/', views.exportar_ventas_excel, name='exportar_ventas_excel'),
     path('productos-mas-vendidos/', views.productos_mas_vendidos_view, name="productos_mas_vendidos"),
     path('usuarios-frecuentes/', views.usuarios_frecuentes_view, name="usuarios_frecuentes"),
 
@@ -43,6 +44,7 @@ urlpatterns = [
 
     # Pedidos
     path('pedidos/', views.pedidos_view, name="pedidos"),
+    path('exportar-pedidos-excel/', views.exportar_pedidos_excel, name='exportar_pedidos_excel'),
     path('pedidos/<int:pedido_id>/cambiar-estado/', views.cambiar_estado_pedido, name='cambiar_estado_pedido'),
     path('detalle_pedido/<int:pedido_id>/', views.detalle_pedido, name='detalle_pedido'),
     path('cambiar_estado_pedido/<int:pedido_id>/', views.cambiar_estado_pedido, name='cambiar_estado_pedido'),
@@ -57,6 +59,7 @@ urlpatterns = [
     path('historial-devoluciones/', views.historial_devoluciones, name='historial_devoluciones'),
     path('aprobar-devolucion/<int:devolucion_id>/', views.aprobar_devolucion, name='aprobar_devolucion'),
     path('rechazar-devolucion/<int:devolucion_id>/', views.rechazar_devolucion, name='rechazar_devolucion'),
+    path('exportar-devoluciones-excel/', views.exportar_devoluciones_excel, name='exportar_devoluciones_excel'),
     # ====================== FIN URLS DEVOLUCIONES ======================
     path('guardar-direccion/', views.guardar_direccion, name='guardar_direccion'),
     path('editar-direccion/', views.editar_direccion, name='editar_direccion'),  # 👈 NUEVA RUTA AGREGADA

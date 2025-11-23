@@ -34,6 +34,9 @@
   </div>
 
   <div class="table-container">
+    <a href="{% url 'usuarios:exportar_pedidos_excel' %}" class="btn-exportar">
+      <i class="fa fa-file-excel"></i> Exportar a Excel
+    </a>
     <div class="filtros-rapidos">
       <h3>Filtros rápidos</h3>
       <div class="filtros-buttons">
@@ -76,20 +79,20 @@
           <td>
             <!-- Solo mostrar estos 3 botones SI NO está entregado -->
             {% if pedido.estado|lower != 'entregado' %}
-              <button class="btn-estado pendiente" onclick="cambiarEstado('{{ pedido.id }}', 'pendiente')"
-                title="Marcar como pendiente">
-                <i class="fa fa-clock"></i>
-              </button>
-              <button class="btn-estado enviado" onclick="cambiarEstado('{{ pedido.id }}', 'enviado')"
-                title="Marcar como enviado">
-                <i class="fa fa-truck"></i>
-              </button>
-              <button class="btn-estado entregado" onclick="cambiarEstado('{{ pedido.id }}', 'entregado')"
-                title="Marcar como entregado">
-                <i class="fa fa-check"></i>
-              </button>
+            <button class="btn-estado pendiente" onclick="cambiarEstado('{{ pedido.id }}', 'pendiente')"
+              title="Marcar como pendiente">
+              <i class="fa fa-clock"></i>
+            </button>
+            <button class="btn-estado enviado" onclick="cambiarEstado('{{ pedido.id }}', 'enviado')"
+              title="Marcar como enviado">
+              <i class="fa fa-truck"></i>
+            </button>
+            <button class="btn-estado entregado" onclick="cambiarEstado('{{ pedido.id }}', 'entregado')"
+              title="Marcar como entregado">
+              <i class="fa fa-check"></i>
+            </button>
             {% endif %}
-            
+
             <!-- El botón VER siempre se muestra -->
             <button class="btn-estado detalle" onclick="verDetalle('{{ pedido.id }}')" title="Ver detalles">
               <i class="fa fa-eye"></i> Ver

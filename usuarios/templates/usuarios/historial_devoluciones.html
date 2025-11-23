@@ -13,6 +13,9 @@
 
     {% if devoluciones %}
     <table class="tabla-historial">
+        <a href="{% url 'usuarios:exportar_devoluciones_excel' %}" class="btn-export-ventas">
+            <i class="fa fa-file-excel"></i> Exportar a Excel
+        </a>
         <thead>
             <tr>
                 <th>#ID Devolución</th>

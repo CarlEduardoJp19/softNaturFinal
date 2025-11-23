@@ -429,6 +429,26 @@
     transition: all 0.2s ease;
   }
 
+  .btn-exportar {
+    background: #E5BE01;
+    color: #292929;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-exportar:hover {
+    background: #F29727;
+    transform: translateY(-2px);
+  }
+
   .btn-estado:hover {
     transform: scale(1.05);
     opacity: 0.9;
@@ -985,11 +1005,13 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    
   }
 
   .btn-export-ventas:hover {
     background: #F29727;
     transform: translateY(-2px);
+    text-decoration: none;
   }
 
 

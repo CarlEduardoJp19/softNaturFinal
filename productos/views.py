@@ -316,17 +316,122 @@ def exportar_inventario_excel(request):
     ws = wb.active
     ws.title = 'Inventario'
 
-    ws.append(['Nombre', 'Descripción', 'Precio', 'Stock', 'Categoría'])
+    from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+    from datetime import datetime
 
-    productos = Producto.objects.all()
+    # Encabezado principal de la tienda (NARANJA)
+    ws.merge_cells('A1:I1')
+    ws['A1'] = 'TIENDA NATURISTA LOS GIRASOLES'
+    ws['A1'].font = Font(bold=True, size=16, color='FFFFFF')
+    ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+    ws['A1'].fill = PatternFill(start_color='E67E22', end_color='E67E22', fill_type='solid')
+    ws.row_dimensions[1].height = 30
+
+    # Subtítulo (NARANJA OSCURO)
+    ws.merge_cells('A2:I2')
+    ws['A2'] = 'INVENTARIO DE PRODUCTOS'
+    ws['A2'].font = Font(bold=True, size=12, color='FFFFFF')
+    ws['A2'].alignment = Alignment(horizontal='center', vertical='center')
+    ws['A2'].fill = PatternFill(start_color='D35400', end_color='D35400', fill_type='solid')
+    ws.row_dimensions[2].height = 25
+
+    # Fecha de generación
+    ws.merge_cells('A3:I3')
+    ws['A3'] = f'Fecha de generación: {datetime.now().strftime("%d/%m/%Y %H:%M")}'
+    ws['A3'].font = Font(italic=True, size=10)
+    ws['A3'].alignment = Alignment(horizontal='center')
+    ws.row_dimensions[3].height = 20
+
+    # Fila vacía
+    ws.append([])
+
+    # Encabezados de columnas (fila 5)
+    encabezados = [
+        'Nombre', 
+        'Descripción', 
+        'Precio', 
+        'Stock Total', 
+        'Categoría',
+        'Código Lote',
+        'Cantidad Lote',
+        'Fecha Caducidad',
+        'Lote Activo'
+    ]
+    ws.append(encabezados)
+
+    # Estilo para encabezados de columnas (AMARILLO)
+    header_fill = PatternFill(start_color='F1C40F', end_color='F1C40F', fill_type='solid')
+    header_font = Font(bold=True, color='000000')
+    thin_border = Border(
+        left=Side(style='thin'),
+        right=Side(style='thin'),
+        top=Side(style='thin'),
+        bottom=Side(style='thin')
+    )
+
+    for col in range(1, 10):
+        cell = ws.cell(row=5, column=col)
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+        cell.border = thin_border
+
+    # Datos de productos
+    productos = Producto.objects.prefetch_related('lotes').all()
+    row_num = 6
+
+    # Color para filas de lote activo (AMARILLO CLARO)
+    lote_activo_fill = PatternFill(start_color='FCF3CF', end_color='FCF3CF', fill_type='solid')
+
     for producto in productos:
-        ws.append([
-            producto.nombProduc,
-            producto.descripcion,
-            float(producto.precio),
-            producto.stock,
-            str(producto.Categoria)
-        ])
+        lote_activo = producto.lotes.filter(
+            cantidad__gt=0
+        ).order_by('fecha_caducidad').first()
+        
+        lotes = producto.lotes.all()
+        
+        if lotes.exists():
+            for lote in lotes:
+                es_activo = "Sí" if lote_activo and lote.id == lote_activo.id else "No"
+                ws.append([
+                    producto.nombProduc,
+                    producto.descripcion,
+                    float(producto.precio),
+                    producto.stock_total,
+                    str(producto.Categoria),
+                    lote.codigo_lote,
+                    lote.cantidad,
+                    lote.fecha_caducidad.strftime('%d/%m/%Y') if lote.fecha_caducidad else 'Sin fecha',
+                    es_activo
+                ])
+                
+                for col in range(1, 10):
+                    cell = ws.cell(row=row_num, column=col)
+                    cell.border = thin_border
+                    if es_activo == "Sí":
+                        cell.fill = lote_activo_fill
+                
+                row_num += 1
+        else:
+            ws.append([
+                producto.nombProduc,
+                producto.descripcion,
+                float(producto.precio),
+                producto.stock_total,
+                str(producto.Categoria),
+                'Sin lote',
+                0,
+                'N/A',
+                'N/A'
+            ])
+            for col in range(1, 10):
+                ws.cell(row=row_num, column=col).border = thin_border
+            row_num += 1
+
+    # Ajustar ancho de columnas
+    column_widths = [25, 40, 12, 12, 20, 15, 15, 15, 12]
+    for i, width in enumerate(column_widths, 1):
+        ws.column_dimensions[openpyxl.utils.get_column_letter(i)].width = width
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=Inventario_de_productos.xlsx'
