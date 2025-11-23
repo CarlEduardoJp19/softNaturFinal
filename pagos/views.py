@@ -3,12 +3,12 @@ import hashlib
 import time
 import json
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 from .models import Transaccion
 from usuarios.models import Pedido, Direccion, PedidoItem
 from productos.models import Producto
-
+from django.views.decorators.csrf import csrf_exempt
 import hashlib
 import time
 from django.shortcuts import render, redirect
@@ -236,35 +236,41 @@ def payment_response(request):
     }
 
     return render(request, 'pagos/payment_response.html', context) 
-
-
-
+    
+@csrf_exempt
 def webhook_bold(request):
-    """Webhook para recibir notificaciones de Bold"""
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            
-            order_id = data.get('order_id')
-            status = data.get('status')
-            
-            if order_id:
-                try:
-                    transaccion = Transaccion.objects.get(order_id=order_id)
-                    transaccion.estado = status
-                    transaccion.save()
-                    
-                    if status == 'approved' and transaccion.pedido:
-                        transaccion.pedido.estado = 'pagado'
-                        transaccion.pedido.save()
-                        
-                except Transaccion.DoesNotExist:
-                    print(f"Transacción no encontrada: {order_id}")
-            
-            print("Webhook Bold recibido:", data)
-            return HttpResponse(status=200)
-            
-        except json.JSONDecodeError:
-            return HttpResponse("Invalid JSON", status=400)
-    else:
-        return HttpResponse("Método no permitido", status=405)
+    if request.method != "POST":
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "JSON inválido"}, status=400)
+
+    print("📩 WEBHOOK DE BOLD RECIBIDO:", data)
+
+    event = data.get("event")
+    order_id = data.get("order_id")
+
+    if not order_id:
+        return JsonResponse({"error": "order_id faltante"}, status=400)
+
+    # Buscar el pedido
+    try:
+        pedido = Pedido.objects.get(order_id=order_id)
+    except Pedido.DoesNotExist:
+        return JsonResponse({"error": "Pedido no encontrado"}, status=404)
+
+    # Actualizar estados según el evento recibido
+    if event == "payment_success":
+        pedido.estado = "pagado"
+        pedido.pago = True
+    elif event == "payment_failed":
+        pedido.estado = "fallido"
+        pedido.pago = False
+    elif event == "payment_refunded":
+        pedido.estado = "reembolsado"
+
+    pedido.save()
+
+    return JsonResponse({"status": "ok"})

@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatInput = document.getElementById("chat-input");
     const chatMessages = document.getElementById("chat-messages");
 
+        let chatHistory = [];
     // Mostrar/ocultar chat
     toggleBtn.addEventListener("click", () => {
         chatBox.classList.toggle("visible");
@@ -20,13 +21,15 @@ document.addEventListener("DOMContentLoaded", function () {
         chatMessages.innerHTML += `<div class="mensaje usuario"><strong>Tú:</strong> ${pregunta}</div>`;
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
+        chatHistory.push({ role: "user", content: pregunta });
+
         fetch("/chatbot/ask/", {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
                 "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
             },
-            body: `pregunta=${encodeURIComponent(pregunta)}`
+            body: JSON.stringify({ history: chatHistory })
         })
         .then(res => res.json())
         .then(data => {
@@ -37,6 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 <img class="botimg" src="/media/uploads/products/robot.png"> 
                 <strong>Bot:</strong> ${htmlRespuesta}</div>`;
             chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            chatHistory.push({ role: "bot", content: data.respuesta });
         })
         .catch(err => {
             chatMessages.innerHTML += `<div class="mensaje bot">

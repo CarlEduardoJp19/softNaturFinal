@@ -15,7 +15,7 @@ body {
 /* ====== Sidebar ====== */
 .sidebar {
   width: 200px;
-  height: 1000px;
+  height: 100vh;
   background: #005E27;
   color: white;
   position: fixed;
@@ -140,7 +140,7 @@ hr {
 @media (min-width: 1400px) {
   .container {
     max-width: 1300px;
-    height: 1000vh;
+    height: auto;
   }
 }
 
@@ -148,7 +148,7 @@ hr {
 @media (max-width: 1200px) {
   .sidebar {
     width: 200px;
-    height: 1000px;
+    height: 100vh;
   }
 
   .content {
@@ -168,7 +168,7 @@ hr {
 @media (max-width: 993px) {
   .sidebar {
     width: 200px;
-    height: 830px;
+    height: 100vh;
     padding: 10px;
   }
 
@@ -205,7 +205,7 @@ hr {
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;
-    height: 830px;
+    height: 100vh;
     transition: all 0.3s ease;
   }
 
@@ -248,7 +248,7 @@ hr {
   .sidebar {
     position: fixed;
     width: 200px;
-    height: 100px;
+    height: 100vh;
     z-index: 999;
     transition: left 0.3s ease;
   }
@@ -277,7 +277,7 @@ hr {
   .sidebar {
     position: fixed;
     width: 200px;
-    height: 100px;
+    height: 100vh;
     z-index: 999;
     transition: left 0.3s ease;
   }

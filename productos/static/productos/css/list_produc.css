@@ -18,17 +18,26 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    min-height: 100%;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f7fa;
     color: #333;
     line-height: 1.6;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    min-height: 100vh;  /* Cambia esta línea */
+    height: auto; 
 }
 
 .container {
     max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
+    margin: 0 auto 0 auto;  /* top right bottom left */
+    padding: 20px 20px 30px 20px;
 }
 
 h1 {
@@ -426,6 +435,8 @@ h1 {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
     margin-top: 30px;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .product-card {

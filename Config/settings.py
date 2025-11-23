@@ -7,6 +7,8 @@ import cloudinary.api
 
 load_dotenv()
 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,9 +80,9 @@ WSGI_APPLICATION = 'Config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'SoftnaturDB',
-        'USER': 'nicoladm',
-        'PASSWORD': 'vale123',
+        'NAME': 'softFinal',
+        'USER': 'eduardo',
+        'PASSWORD': 'eduardo123',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -160,7 +162,9 @@ BOLD_API_KEY = os.getenv("BOLD_API_KEY")
 BOLD_SECRET_KEY = os.getenv("BOLD_SECRET_KEY")
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://princeliest-paleozoulogic-hettie.ngrok-free.dev'
+    'https://kamala-isotheral-charlyn.ngrok-free.dev'
 ]
+
+
 
 
