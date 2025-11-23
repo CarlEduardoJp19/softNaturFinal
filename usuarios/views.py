@@ -41,52 +41,84 @@ def nosotros(request):
 
 @admin_required
 def dashboard(request):
+    tiempo = request.GET.get("tiempo")  # semana, mes, anio, o vacío
+    hoy = timezone.now()
+
+    # Base: solo datos desde 2025
+    pedidos = Pedido.objects.filter(
+        pago=True,
+        fecha_creacion__year__gte=2025
+    )
+
+    # FILTRO DE TIEMPO
+    if tiempo == "semana":
+        inicio_semana = hoy - timezone.timedelta(days=hoy.weekday())
+        pedidos = pedidos.filter(fecha_creacion__gte=inicio_semana)
+
+    elif tiempo == "mes":
+        pedidos = pedidos.filter(
+            fecha_creacion__year=hoy.year,
+            fecha_creacion__month=hoy.month
+        )
+
+    elif tiempo == "anio":
+        pedidos = pedidos.filter(
+            fecha_creacion__year=hoy.year
+        )
+
+    total_ventas = pedidos.aggregate(total=Sum("total"))["total"] or 0
+
+    total_pedidos = pedidos.count()
+
     prod_info = (
-        Producto.objects.annotate(
+        Producto.objects
+        .annotate(
             total_vendidos=Sum(
-                'pedidoitem__cantidad',
-                filter=Q(pedidoitem__pedido__pago=True)   # Solo pedidos pagados
+                "pedidoitem__cantidad",
+                filter=Q(pedidoitem__pedido__in=pedidos)
             )
         )
-        .filter(total_vendidos__gt=0)          # Solo productos realmente vendidos
-        .order_by('-total_vendidos')           # Orden descendente
+        .filter(total_vendidos__gt=0)
+        .order_by("-total_vendidos")
     )
 
+    # Usuarios con más compras
     usuarios_info = (
-        Usuario.objects.annotate(
+        Usuario.objects
+        .annotate(
             pedidos_pagados=Count(
-                'pedido',
-                filter=Q(pedido__pago=True)    # Solo pedidos pagados
+                "pedido",
+                filter=Q(pedido__in=pedidos)
             )
         )
-        .filter(pedidos_pagados__gt=0)         # Solo usuarios que sí han comprado
-        .order_by('-pedidos_pagados')          # Más compras primero
+        .filter(pedidos_pagados__gt=0)
+        .order_by("-pedidos_pagados")
     )
-    
-    total_ventas = Pedido.objects.filter(pago=True).aggregate(
-        total=Sum('total')
-    )['total'] or 0
 
-    total_pedidos = Pedido.objects.filter(pago=True).count()
+    ventas_info = (
+        pedidos.annotate(mes=TruncMonth("fecha_creacion"))
+        .values("mes")
+        .annotate(total=Sum("total"))
+        .order_by("mes")
+    )
+    ventas_info = [
+        (v["mes"].strftime("%B"), v["total"]) for v in ventas_info
+    ]
+
+    estado_info = (
+        pedidos.values("estado")
+        .annotate(total=Count("id"))
+        .order_by("estado")
+    )
+    estado_info = [(e["estado"], e["total"]) for e in estado_info]
+
+    ultimas_devoluciones = (
+        Devolucion.objects.order_by('-fecha_solicitud')[:5]
+    )
+
+    # Totales generales (no dependen del filtro)
     total_productos = Producto.objects.count()
     total_usuarios = Usuario.objects.count()
-    # Ventas por mes
-    ventas_info = Pedido.objects.filter(pago=True).annotate(
-        mes=TruncMonth('fecha_creacion')
-    ).values('mes').annotate(
-        total=Sum('total')
-    ).order_by('mes')
-
-    ventas_info = [(v['mes'].strftime("%B"), v['total']) for v in ventas_info]
-
-    # Estado de pedidos (solo pagados)
-    estado_info = (
-        Pedido.objects.filter(pago=True)
-        .values('estado')
-        .annotate(total=Count('id'))
-        .order_by('estado')
-    )
-    estado_info = [(e['estado'], e['total']) for e in estado_info]
 
     return render(request, "usuarios/dashboard.html", {
         "prod_info": prod_info,
@@ -97,6 +129,7 @@ def dashboard(request):
         "total_usuarios": total_usuarios,
         "ventas_info": ventas_info,
         "estado_info": estado_info,
+        "ultimas_devoluciones": ultimas_devoluciones,
     })
 
 @admin_required
@@ -1187,79 +1220,160 @@ def gst_devoluciones(request):
     
     return render(request, 'usuarios/gst_devoluciones.html', context)
 
-@login_required
 def aprobar_devolucion(request, devolucion_id):
     if not request.user.is_staff:
         return JsonResponse({'success': False, 'error': "No tienes permisos."}, status=403)
-
+    
     try:
         devolucion = Devolucion.objects.select_related('pedido', 'producto', 'item').get(id=devolucion_id)
         producto = devolucion.producto
-        item = devolucion.item  # Obtenemos el PedidoItem asociado
-
+        item = devolucion.item
+        
         if not item:
             return JsonResponse({'success': False, 'error': "No se encontró el item asociado a la devolución"}, status=400)
-
+        
         # Marcar la devolución como aprobada
         devolucion.estado = "Aprobada"
         devolucion.fecha_respuesta = timezone.now()
         devolucion.save()
-
+        
         # Registrar historial
+        comentario_inicial = f"Aprobada. Motivo: {devolucion.motivo}"
         HistorialDevolucion.objects.create(
             devolucion=devolucion,
             estado='Aprobada',
             usuario_admin=request.user,
-            comentario=f"Aprobada. Motivo: {devolucion.motivo}"
+            comentario=comentario_inicial
         )
-
-        # Reducir stock solo si hay disponible
-        # === DEVOLVER STOCK AL LOTE ORIGINAL ===
-
-        lote_original = item.lote  # Lote asociado al producto del pedido
-
-        if lote_original:
-            lote_original.cantidad += 1
-            lote_original.save()
-
-        # === RECALCULAR STOCK TOTAL DEL PRODUCTO DESDE LOS LOTES ===
-        producto.stock = sum(l.cantidad for l in producto.lotes.all())
-        producto.save()
-
-
-        # Crear un nuevo pedido/reemplazo solo con la unidad específica
-        nuevo_pedido = Pedido.objects.create(usuario=devolucion.usuario)
-
-        # Determinar qué producto se debe enviar según el motivo
+        
+        # === GESTIÓN DE STOCK DEL PRODUCTO DEVUELTO ===
+        lote_original = item.lote
+        
+        if devolucion.motivo == "Producto equivocado":
+            # El producto EQUIVOCADO nunca debió salir del stock (fue error de empaque)
+            # El producto CORRECTO ya fue descontado en la compra original
+            # Por tanto: NO hay cambios en el stock
+            print("\n→ PRODUCTO EQUIVOCADO: Sin cambios en stock")
+            print("   - Producto correcto (que pidió) ya fue descontado en compra original")
+            print("   - Producto equivocado (que recibió) nunca salió del inventario")
+            comentario_stock = "Producto equivocado devuelto. Sin cambios en stock (el correcto ya fue descontado originalmente)"
+        
+        elif devolucion.motivo in ["Fecha de vencimiento expirado", "Producto dañado"]:
+            # El producto vencido/dañado YA FUE DESCONTADO en la compra original
+            # El cliente lo tiene en su poder, por tanto NO se descuenta nuevamente
+            # Solo se descartará cuando se recoja (pero ya está fuera del inventario)
+            print("\n→ PRODUCTO DAÑADO/VENCIDO: Ya fue descontado en compra original")
+            print("   - El producto defectuoso está en poder del cliente")
+            print("   - NO se descuenta nuevamente (ya salió del inventario)")
+            
+            if lote_original:
+                comentario_stock = f"Producto defectuoso del lote {lote_original.codigo_lote or lote_original.id} (ya descontado en compra)"
+            else:
+                comentario_stock = "Producto defectuoso (ya descontado en compra)"
+        
+        else:
+            print("\n→ OTRO MOTIVO: Sin cambios en stock")
+            comentario_stock = "Sin cambios en el stock"
+        
+        # Actualizar comentario del historial
+        historial = HistorialDevolucion.objects.filter(devolucion=devolucion).last()
+        if historial:
+            historial.comentario += f" | {comentario_stock}"
+            historial.save()
+        
+        # === GESTIÓN DE REEMPLAZO ===
+        mensaje_reemplazo = ""
+        lote_reemplazo = None
+        
         if devolucion.motivo in ["Fecha de vencimiento expirado", "Producto dañado"]:
-            # Se reemplaza por el mismo producto
-            nuevo_pedido.items.create(
-                producto=producto,
-                cantidad=1,
-                precio_unitario=item.precio_unitario
-            )
-
+            # Buscar un lote disponible para el reemplazo
+            lote_reemplazo = producto.lotes.filter(cantidad__gt=0).order_by('fecha_caducidad').first()
+            
+            if lote_reemplazo:
+                # Descontar 1 unidad del lote de reemplazo
+                lote_reemplazo.cantidad -= 1
+                lote_reemplazo.save()
+                print(f"✅ Descontado 1 unidad del lote {lote_reemplazo.codigo_lote or lote_reemplazo.id} (reemplazo)")
+                print(f"   Stock lote después: {lote_reemplazo.cantidad}")
+                mensaje_reemplazo = f"Se enviará un producto de reemplazo del lote {lote_reemplazo.codigo_lote or lote_reemplazo.id}"
+            else:
+                print(f"⚠️ ADVERTENCIA: No hay stock disponible para enviar reemplazo")
+                mensaje_reemplazo = "⚠️ Sin stock disponible para reemplazo"
+                
         elif devolucion.motivo == "Producto equivocado":
-            # En caso de producto equivocado, enviamos el producto correcto
-            producto_correcto = item.producto  # esto asume que item.producto es el correcto
-            nuevo_pedido.items.create(
-                producto=producto_correcto,
-                cantidad=1,
-                precio_unitario=producto_correcto.precio
-            )
+            # Buscar un lote disponible del producto CORRECTO
+            lote_reemplazo = producto.lotes.filter(cantidad__gt=0).order_by('fecha_caducidad').first()
+            
+            if lote_reemplazo:
+                print(f"✅ Se enviará el producto correcto del lote {lote_reemplazo.codigo_lote or lote_reemplazo.id} (sin descuento adicional)")
+                mensaje_reemplazo = f"Se enviará el producto correcto del lote {lote_reemplazo.codigo_lote or lote_reemplazo.id}"
+            else:
+                print(f"⚠️ ADVERTENCIA: No hay lotes disponibles del producto correcto")
+                mensaje_reemplazo = "⚠️ Sin stock disponible del producto correcto"
+        else:
+            mensaje_reemplazo = "Se gestionará el envío del reemplazo"
+        
+        # === ENVIAR EMAIL AL CLIENTE ===
+        try:
+            from django.core.mail import send_mail
+            from django.conf import settings
+            
+            # Obtener nombre del usuario
+            nombre_usuario = devolucion.usuario.nombre if devolucion.usuario.nombre else devolucion.usuario.email.split('@')[0]
+            
+            asunto = f'Devolución #{devolucion.id} aprobada - {producto.nombProduc if hasattr(producto, "nombProduc") else str(producto)}'
+            
+            mensaje = f"""
+Hola {nombre_usuario},
 
+Tu devolución del producto "{producto.nombProduc if hasattr(producto, "nombProduc") else str(producto)}" ha sido APROBADA.
+
+DETALLES DE LA DEVOLUCIÓN:
+- Devolución #: {devolucion.id}
+- Producto: {producto.nombProduc if hasattr(producto, "nombProduc") else str(producto)}
+- Unidad: {devolucion.unidad}
+- Motivo: {devolucion.motivo}
+- Fecha de aprobación: {devolucion.fecha_respuesta.strftime('%d/%m/%Y %H:%M')}
+
+REEMPLAZO:
+{mensaje_reemplazo}
+
+Pronto recibirás tu producto de reemplazo{f' (Lote: {lote_reemplazo.codigo_lote or lote_reemplazo.id}, Vencimiento: {lote_reemplazo.fecha_caducidad.strftime("%d/%m/%Y")})' if lote_reemplazo else ''}.
+
+Gracias por tu confianza.
+
+---
+Este es un correo automático.
+            """.strip()
+            
+            # Verificar que el usuario tenga email
+            if devolucion.usuario.email:
+                send_mail(
+                    subject=asunto,
+                    message=mensaje,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[devolucion.usuario.email],
+                    fail_silently=True
+                )
+            else:
+                print(f"Usuario {devolucion.usuario.nombre} no tiene email configurado")
+            
+        except Exception as e:
+            print(f"Error al enviar email: {str(e)}")
+        
         # Respuesta AJAX final
         return JsonResponse({
             'success': True,
             'id': devolucion_id,
-            'mensaje': f"Devolución #{devolucion_id} aprobada correctamente."
+            'mensaje': f"Devolución #{devolucion_id} aprobada. {mensaje_reemplazo}"
         })
-
+        
     except Devolucion.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Devolución no encontrada'}, status=404)
     except Exception as e:
+        print(f"Error en aprobar_devolucion: {str(e)}")
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
+    
 @login_required
 def rechazar_devolucion(request, devolucion_id):
     if not request.user.is_staff and not request.user.is_superuser:
@@ -1295,13 +1409,60 @@ def historial_devoluciones(request):
         messages.error(request, "No tienes permisos para acceder aquí")
         return redirect("usuarios:dashboard")
     
-    devoluciones = Devolucion.objects.filter(estado__in=['Aprobada', 'Rechazada']).prefetch_related('historial').order_by('-fecha_solicitud')
+    filtro_tiempo = request.GET.get('tiempo')
+    estado = request.GET.get('estado')
+    busqueda = request.GET.get('buscar')
+    
+    ahora = timezone.now()
+    
+    # Base query - solo Aprobadas o Rechazadas
+    devoluciones = Devolucion.objects.filter(
+        estado__in=['Aprobada', 'Rechazada']
+    ).select_related('usuario', 'producto', 'pedido', 'lote').prefetch_related('historial')
+    
+    # Filtro por tiempo
+    if filtro_tiempo == "semana":
+        inicio_semana = ahora - timezone.timedelta(days=ahora.weekday())
+        devoluciones = devoluciones.filter(fecha_solicitud__gte=inicio_semana)
+    elif filtro_tiempo == "mes":
+        devoluciones = devoluciones.filter(
+            fecha_solicitud__year=ahora.year,
+            fecha_solicitud__month=ahora.month
+        )
+    elif filtro_tiempo == "año":
+        devoluciones = devoluciones.filter(
+            fecha_solicitud__year=ahora.year
+        )
+    
+    # Filtro por estado (Aprobada o Rechazada)
+    if estado:
+        devoluciones = devoluciones.filter(estado=estado)
+    
+    # Filtro por búsqueda (usuario, producto o lote)
+    if busqueda:
+        devoluciones = devoluciones.filter(
+            Q(usuario__nombre__icontains=busqueda) |
+            Q(usuario__email__icontains=busqueda) |
+            Q(producto__nombProduc__icontains=busqueda) |
+            Q(lote__codigo_lote__icontains=busqueda)
+        )
+    
+    # Orden
+    devoluciones = devoluciones.order_by('-fecha_solicitud')
+    
+    # Conteos para estadísticas
+    total_aprobadas = devoluciones.filter(estado='Aprobada').count()
+    total_rechazadas = devoluciones.filter(estado='Rechazada').count()
     
     context = {
-        'devoluciones': devoluciones
+        'devoluciones': devoluciones,
+        'total_aprobadas': total_aprobadas,
+        'total_rechazadas': total_rechazadas,
+        'filtro_tiempo': filtro_tiempo,
+        'estado_filtro': estado,
+        'busqueda': busqueda,
     }
     return render(request, 'usuarios/historial_devoluciones.html', context)
-
 
 def exportar_devoluciones_excel(request):
     import openpyxl

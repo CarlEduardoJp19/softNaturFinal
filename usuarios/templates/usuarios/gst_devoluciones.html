@@ -13,32 +13,6 @@
         Gestión de Devoluciones
     </h2>
 
-    <form method="GET" class="filtros-devoluciones">
-        <div class="filtro-grupo">
-            <label>Estado:</label>
-            <select name="estado">
-                <option value="">Todos</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Aprobada">Aprobada</option>
-                <option value="Rechazada">Rechazada</option>
-            </select>
-        </div>
-
-        <div class="filtro-grupo">
-            <label>Desde:</label>
-            <input type="date" name="fecha_desde">
-        </div>
-
-        <div class="filtro-grupo">
-            <label>Hasta:</label>
-            <input type="date" name="fecha_hasta">
-        </div>
-
-        <button type="submit" class="btn-filtrar-devoluciones">
-            <i class="fa fa-filter"></i> Filtrar
-        </button>
-    </form>
-
     <div class="tabla-devoluciones">
         {% if devoluciones %}
         <table>

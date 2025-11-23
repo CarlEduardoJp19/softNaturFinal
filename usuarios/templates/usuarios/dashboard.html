@@ -12,7 +12,17 @@
 
 <div class="contenedor-dashboard">
   <h1>Dashboard Administrador</h1>
+  <form method="GET">
+        <label>Filtrar por:</label>
+        <select name="tiempo">
+            <option value="">Todos</option>
+            <option value="semana" {% if request.GET.tiempo == "semana" %}selected{% endif %}>Semana</option>
+            <option value="mes" {% if request.GET.tiempo == "mes" %}selected{% endif %}>Mes</option>
+            <option value="anio" {% if request.GET.tiempo == "anio" %}selected{% endif %}>Año</option>
+        </select>
 
+        <button type="submit">Aplicar</button>
+    </form>
   <div class="cards">
     <div class="card" data-url="{% url 'usuarios:informe_ventas' %}">
       <h2>Ventas</h2>
@@ -76,6 +86,22 @@
         {% endfor %}
       </ul>
     </div>
+  </div>
+  <div class="section devoluciones-largas">
+    <h3>Últimas 5 Devoluciones</h3>
+
+    {% if ultimas_devoluciones %}
+    <ul>
+        {% for dev in ultimas_devoluciones %}
+            <li>
+                <strong>{{ dev.producto.nombProduc }}</strong><br>
+                {{ dev.cantidad }} unidades — Motivo: {{ dev.motivo }}
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No hay devoluciones registradas.</p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

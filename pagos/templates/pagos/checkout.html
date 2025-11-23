@@ -2,15 +2,19 @@
 {% load humanize %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Bold</title>
     <link rel="stylesheet" href="{% static 'pagos/css/checkout.css' %}" />
+    <link rel="stylesheet" href="{% static 'pagos/css/alerta.css' %}">
+
     <!-- Script de Bold -->
     <script src="https://checkout.bold.co/library/boldPaymentButton.js"></script>
-    <script src="{% static 'pagos/js/checkout.js' %}" defer></script> 
+    <script src="{% static 'pagos/js/checkout.js' %}" defer></script>
 </head>
+
 <body>
     <!-- Header -->
     <div class="header">
@@ -23,7 +27,8 @@
         <!-- Columna izquierda: Formulario -->
         <div class="form-section">
             <h2>Información de envío</h2>
-            <form method="POST" action="{% url 'usuarios:guardar_direccion' %}">
+            <!--id agregado-->
+            <form id="form-direccion" method="POST" action="{% url 'usuarios:guardar_direccion' %}" >
                 {% csrf_token %}
 
                 <div class="form-row">
@@ -32,7 +37,8 @@
                         <!-- ✅ VALOR PRE-CARGADO -->
                         <input type="text" id="nombre" name="nombre_completo" 
                                value="{% if direccion_guardada %}{{ direccion_guardada.nombre_completo }}{% endif %}" 
-                               required>
+                               required maxlength="30">
+                        <span class="error"></span> <!-- alertas -->
                     </div>
 
                     <div class="form-group">
@@ -40,16 +46,19 @@
                         <!-- ✅ VALOR PRE-CARGADO -->
                         <input type="tel" id="telefono" name="telefono" 
                                value="{% if direccion_guardada %}{{ direccion_guardada.telefono }}{% endif %}" 
-                               required>
+                               required maxlength="10">
+                        <span class="error"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="direccion">Dirección completa *</label>
                     <!-- ✅ VALOR PRE-CARGADO -->
-                    <textarea id="direccion" name="direccion_completa" required
+                    <textarea id="direccion" name="direccion_completa" required maxlength="60"
                         placeholder="Calle, número, apartamento, etc.">{% if direccion_guardada %}{{ direccion_guardada.direccion_completa }}{% endif %}</textarea>
+                    <span class="error"></span>
                 </div>
+
 
                 <div class="form-row">
                     <div class="form-group">
@@ -57,22 +66,25 @@
                         <!-- ✅ VALOR PRE-CARGADO -->
                         <input type="text" id="ciudad" name="ciudad" 
                                value="{% if direccion_guardada %}{{ direccion_guardada.ciudad }}{% endif %}" 
-                               required>
+                               required  maxlength="30">
+                        <span class="error"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="codigo_postal">Código postal</label>
                         <!-- ✅ VALOR PRE-CARGADO -->
                         <input type="text" id="codigo_postal" name="codigo_postal" 
-                               value="{% if direccion_guardada %}{{ direccion_guardada.codigo_postal|default:'' }}{% endif %}">
+                               value="{% if direccion_guardada %}{{ direccion_guardada.codigo_postal|default:'' }}{% endif %}"  maxlength="6">
+                        <span class="error"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="notas">Referencias</label>
                     <!-- ✅ VALOR PRE-CARGADO -->
-                    <textarea id="notas" name="notas_entrega"
+                    <textarea id="notas" name="notas_entrega" maxlength="150"
                         placeholder="Instrucciones especiales para la entrega">{% if direccion_guardada %}{{ direccion_guardada.notas_entrega|default:'' }}{% endif %}</textarea>
+                    <span class="error"></span>
                 </div>
 
                 <button type="submit" class="btn-guardar">Guardar información</button>
@@ -167,7 +179,7 @@
                 <p class="order-id">Order ID: {{ order_id }}</p>
             </div>
 
-            <!-- Botón de pago eduar hizo cambia aca (data-api-key) yo lo tengo diferente, cambios por si algo-->
+            <!-- Botón de pago -->
             <div class="pago-card">
                 <h2>Método de pago</h2>
                 <form>
@@ -179,6 +191,16 @@
             </div>
         </div>
     </div>
+<!--alertas -->
+    <div id="custom-alert" class="alert-overlay">
+        <div class="alert-box">
+            <h2 id="alert-title">Mensaje</h2>
+            <p id="alert-message">Texto del mensaje.</p>
+            <div class="alert-buttons">
+                <button id="btn-cancelar">Cancelar</button>
+                <button id="btn-aceptar">Aceptar</button>
+            </div>
+        </div>
+    </div>
 </body>
-
 </html>

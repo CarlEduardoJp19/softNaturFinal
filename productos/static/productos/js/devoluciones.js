@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ====== DATOS DE PRODUCTOS ======
     const productosScript = document.getElementById('productosData');
     const todosLosProductos = productosScript ? JSON.parse(productosScript.textContent) : [];
-    console.log('Productos cargados:', todosLosProductos); // <- aquí debes ver el array
+    console.log('Productos cargados:', todosLosProductos);
 
     // ====== CAMBIAR TABS ======
     function cambiarTab(tab, event) {
@@ -19,10 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectPedido = document.getElementById('selectPedido');
         const selectProducto = document.getElementById('selectProducto');
         const grupoProducto = document.getElementById('grupoProducto');
+        const grupoLote = document.getElementById('grupoLote');
 
         const pedidoSeleccionado = selectPedido.value;
         if (!pedidoSeleccionado) {
             grupoProducto.style.display = 'none';
+            grupoLote.style.display = 'none';
             selectProducto.innerHTML = '<option value="">-- Primero selecciona un pedido --</option>';
             return;
         }
@@ -33,12 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
         selectProducto.innerHTML = '<option value="">-- Selecciona el producto --</option>';
         productos.forEach(p => {
             const option = document.createElement('option');
-            option.value = `${p.producto_id}|${p.unidad}|${p.codigo_lote}`;
-            option.textContent = `${p.producto_nombre} - Unidad ${p.unidad} - Lote ${p.codigo_lote} - $${p.precio}`;
+            // Formato: producto_id|item_id|lote_codigo
+            option.value = `${p.producto_id}|${p.item_id}|${p.codigo_lote || ''}`;
+            // Guardar la unidad como data attribute
+            option.setAttribute('data-unidad', p.unidad);
+            option.textContent = `${p.producto_nombre} - Unidad ${p.unidad} - Lote ${p.codigo_lote || 'Sin lote'} - $${p.precio}`;
             selectProducto.appendChild(option);
         });
 
         grupoProducto.style.display = 'block';
+        grupoLote.style.display = 'none'; // Ocultar lote hasta seleccionar producto
     }
     window.cargarProductos = cargarProductos;
 
@@ -56,15 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const [productoId, unidad] = selected.value.split('-').map(Number);
-            const producto = todosLosProductos.find(p => p.producto_id === productoId && p.unidad === unidad);
-
-            if (producto && producto.codigo_lote) {
-                textoLote.textContent = producto.codigo_lote;
+            // Parsear el formato: producto_id|item_id|lote_codigo
+            const [productoId, itemId, lotecodigo] = selected.value.split('|');
+            
+            console.log('Producto seleccionado - Lote:', lotecodigo);
+            
+            // Mostrar el lote
+            if (lotecodigo && lotecodigo.trim() !== '') {
+                textoLote.textContent = lotecodigo;
                 grupoLote.style.display = 'block';
             } else {
-                textoLote.textContent = '';
-                grupoLote.style.display = 'none';
+                textoLote.textContent = 'Sin lote asignado';
+                grupoLote.style.display = 'block';
             }
         });
     }
@@ -193,7 +202,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formDevolucion) {
         formDevolucion.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Añadir la unidad al FormData
+            const selectProducto = document.getElementById('selectProducto');
+            const selectedOption = selectProducto.options[selectProducto.selectedIndex];
+            const unidad = selectedOption.getAttribute('data-unidad');
+            
             const formData = new FormData(formDevolucion);
+            formData.set('unidad', unidad);
+            
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
             fetch(formDevolucion.action, {
@@ -209,14 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.success) {
                     alert(data.mensaje);
                     // Quitar producto devuelto del select
-                    const selectProducto = document.getElementById('selectProducto');
-                    const valueToRemove = `${data.producto_id}-${data.unidad}`;
-                    const optionProd = Array.from(selectProducto.options).find(o => o.value === valueToRemove);
-                    if (optionProd) optionProd.remove();
+                    const valueToRemove = selectedOption.value;
+                    if (selectedOption) selectedOption.remove();
 
                     // Quitar pedido si no quedan productos
                     const pedidoId = data.pedido_id;
-                    const restantes = Array.from(selectProducto.options).filter(o => o.value !== "" && o.value.split('-')[0] != "");
+                    const restantes = Array.from(selectProducto.options).filter(o => o.value !== "");
                     if (restantes.length === 0) {
                         const selectPedido = document.getElementById('selectPedido');
                         const optionPedido = Array.from(selectPedido.options).find(o => parseInt(o.value) === pedidoId);
@@ -224,6 +239,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('grupoProducto').style.display = 'none';
                         document.getElementById('grupoLote').style.display = 'none';
                     }
+                    
+                    // Limpiar formulario
+                    formDevolucion.reset();
+                    fotosCapturadas = [];
+                    actualizarPreview();
+                    // Ocultar grupo de lote
+                    document.getElementById('grupoLote').style.display = 'none';
                 } else {
                     alert(data.mensaje);
                 }

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'productos/css/estilos.css' %}" />
+<link rel="stylesheet" href="{% static 'productos/css/estilos.css' %}?v={{ timestamp }}" />
 {% endblock %}
 
 {% block content %}
@@ -47,6 +47,7 @@
 
     <!-- TAB 2: SOLICITAR NUEVA DEVOLUCIÓN -->
     <div id="nueva" class="tab-content">
+        {% if pedidos_agrupados %}
         <form class="form-devolucion" method="POST" enctype="multipart/form-data" id="formDevolucion">
             {% csrf_token %}
             <div class="form-group">
@@ -55,11 +56,19 @@
                     <option value="">-- Selecciona un pedido --</option>
                     {% for pedido in pedidos_agrupados %}
                     <option value="{{ pedido.pedido_id }}">
-                        Pedido #{{ pedido.pedido_id }} - {{ pedido.fecha_pedido }} ({{ pedido.cantidad_productos }}
-                        producto{% if pedido.cantidad_productos > 1 %}s{% endif %})
+                        Pedido #{{ pedido.pedido_id }} - {{ pedido.fecha_pedido }} 
+                        ({{ pedido.cantidad_productos }} producto{% if pedido.cantidad_productos > 1 %}s{% endif %})
+                        {% if pedido.dias_restantes <= 3 %}
+                            <span style="color: red;">⚠️ {{ pedido.dias_restantes }} día{% if pedido.dias_restantes > 1 %}s{% endif %} restante{% if pedido.dias_restantes > 1 %}s{% endif %}</span>
+                        {% else %}
+                            - {{ pedido.dias_restantes }} días para devolver
+                        {% endif %}
                     </option>
                     {% endfor %}
                 </select>
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    <i class="fa fa-info-circle"></i> Tienes 10 días desde la entrega para solicitar devoluciones
+                </small>
             </div>
 
             <div class="form-group" id="grupoProducto" style="display: none;">
@@ -69,10 +78,10 @@
                 </select>
             </div>
 
-            <!-- AQUI PEGAS ESTO -->
+            <!-- GRUPO LOTE -->
             <div class="form-group" id="grupoLote" style="display:none; margin-top:10px;">
                 <label><i class="fa fa-tag"></i> Lote del producto:</label>
-                <p id="textoLote" class="lote-info"></p>
+                <p id="textoLote" class="lote-info" style="background: #f0f0f0; padding: 10px; border-radius: 5px; margin: 5px 0;"></p>
             </div>
 
             <div class="form-group">
@@ -126,6 +135,18 @@
             <button type="submit" class="btn-submit"><i class="fa fa-paper-plane"></i> Enviar Solicitud de
                 Devolución</button>
         </form>
+        {% else %}
+        <div class="no-devoluciones" style="text-align: center; padding: 40px;">
+            <i class="fa fa-calendar-times" style="font-size: 4rem; color: #ddd; margin-bottom: 20px;"></i>
+            <h3 style="color: #666;">No tienes pedidos disponibles para devolución</h3>
+            <p style="color: #999; margin-top: 10px;">
+                Solo puedes solicitar devoluciones dentro de los primeros 10 días después de recibir tu pedido.
+            </p>
+            <p style="color: #999;">
+                Tus pedidos anteriores ya superaron este límite o todos los productos ya fueron devueltos.
+            </p>
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -152,8 +173,25 @@
     {{ productos_devolubles|safe }}
 </script>
 
+<!-- DEBUG: Verificar que los productos tienen lote -->
+<script>
+console.log('=== DEBUG PRODUCTOS ===');
+const productos = JSON.parse(document.getElementById('productosData').textContent);
+console.log('Total productos:', productos.length);
+productos.forEach((p, i) => {
+    if (i < 3) { // Mostrar solo los primeros 3
+        console.log(`Producto ${i}:`, {
+            nombre: p.producto_nombre,
+            lote: p.lote,
+            codigo_lote: p.codigo_lote,
+            unidad: p.unidad
+        });
+    }
+});
+</script>
+
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'productos/js/devoluciones.js' %}"></script>
+<script src="{% static 'productos/js/devoluciones.js' %}?v={{ timestamp }}"></script>
 {% endblock %}
