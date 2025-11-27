@@ -128,15 +128,6 @@ def payment_response(request):
     carrito = request.session.get("carrito", {})
     productos_ids = []
 
-       # 🔍 DEBUG: Ver qué hay en el carrito
-    print("=" * 50)
-    print("CONTENIDO DEL CARRITO:")
-    for producto_id, item in carrito.items():
-        print(f"  Producto ID: {producto_id}")
-        print(f"  Item completo: {item}")
-        print(f"  Lote en carrito: {item.get('lote')}")
-    print("=" * 50)
-
     if tx_status == 'approved':
         subtotal = sum(float(item['precio']) * int(item['cantidad']) for item in carrito.values())
         iva = subtotal * 0.19
@@ -148,26 +139,16 @@ def payment_response(request):
 
             if 'ibague' in ciudad or 'ibagué' in ciudad:
                 costo_envio = 8000
-            # Todos los demás municipios del Tolima - $12,000
             elif any(municipio in ciudad for municipio in [
-                # Zona norte
                 'honda', 'mariquita', 'armero', 'guayabal', 'casabianca', 'palocabildo', 
                 'fresno', 'falan', 'herveo', 'lerida', 'lérida', 'ambalema', 'venadillo',
-                
-                # Zona sur
                 'espinal', 'guamo', 'saldaña', 'saldana', 'purificacion', 'purificación', 
                 'suarez', 'suárez', 'carmen de apicala', 'apicala', 'melgar', 'icononzo', 
                 'cunday', 'villarrica', 'prado', 'dolores', 'alpujarra', 'ataco',
-                
-                # Zona occidente
                 'chaparral', 'rioblanco', 'roncesvalles', 'ortega', 'coyaima', 
                 'natagaima', 'san antonio',
-                
-                # Zona centro
                 'cajamarca', 'rovira', 'valle de san juan', 'san juan', 'coello', 
                 'flandes', 'alvarado', 'piedras', 'anzoategui', 'anzoátegui', 'santa isabel',
-                
-                # Zona oriente  
                 'libano', 'líbano', 'murillo', 'villahermosa', 'planadas', 'san luis'
             ]):
                 costo_envio = 12000
@@ -188,9 +169,11 @@ def payment_response(request):
             producto = Producto.objects.get(id=int(producto_id))
             cantidad = int(item['cantidad'])
             precio_unitario = float(item['precio'])
+            
+            # ✅ AGREGAR EL ID A LA LISTA
+            productos_ids.append(int(producto_id))
 
-            lote_codigo = item.get('lote')  # viene como texto "A3360725"
-
+            lote_codigo = item.get('lote')
             lote_obj = None
             if lote_codigo:
                 try:
@@ -198,24 +181,20 @@ def payment_response(request):
                 except Lote.DoesNotExist:
                     lote_obj = None
 
-            # Crear el item usando el OBJETO, no el string
             PedidoItem.objects.create(
                 pedido=pedido,
                 producto=producto,
                 cantidad=cantidad,
                 precio_unitario=precio_unitario,
                 lote=lote_obj,
-                codigo_lote=lote_obj.codigo_lote if lote_obj else None  # ← aquí va el objeto o None
+                codigo_lote=lote_obj.codigo_lote if lote_obj else None
             )
 
-            # Si existe el lote, descuenta del lote UNA VEZ
             if lote_obj:
                 lote_obj.cantidad -= cantidad
                 if lote_obj.cantidad < 0:
                     lote_obj.cantidad = 0
                 lote_obj.save()
-
-
 
         Transaccion.objects.create(
             order_id=order_id,
@@ -235,7 +214,7 @@ def payment_response(request):
         'productos_ids': productos_ids,
     }
 
-    return render(request, 'pagos/payment_response.html', context) 
+    return render(request, 'pagos/payment_response.html', context)
     
 @csrf_exempt
 def webhook_bold(request):

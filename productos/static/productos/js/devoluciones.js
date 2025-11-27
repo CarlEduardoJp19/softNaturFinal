@@ -64,9 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Parsear el formato: producto_id|item_id|lote_codigo
             const [productoId, itemId, lotecodigo] = selected.value.split('|');
-            
+
             console.log('Producto seleccionado - Lote:', lotecodigo);
-            
+
             // Mostrar el lote
             if (lotecodigo && lotecodigo.trim() !== '') {
                 textoLote.textContent = lotecodigo;
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarPreview();
     }
 
-    window.eliminarFoto = function(index) {
+    window.eliminarFoto = function (index) {
         fotosCapturadas.splice(index, 1);
         actualizarPreview();
     }
@@ -197,20 +197,27 @@ document.addEventListener('DOMContentLoaded', () => {
         inputArchivo.value = '';
     });
 
-    // ====== ENVÍO DEL FORMULARIO ======
+    // ====== ENVÍO DEL FORMULARIO ====== (CORREGIDO - UN SOLO EVENT LISTENER)
     const formDevolucion = document.getElementById('formDevolucion');
     if (formDevolucion) {
-        formDevolucion.addEventListener('submit', function(e) {
+        formDevolucion.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
+            // 🔥 DESACTIVAR BOTÓN INMEDIATAMENTE
+            const btn = document.getElementById('btnEnviarDevolucion');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Enviando...';
+            }
+
             // Añadir la unidad al FormData
             const selectProducto = document.getElementById('selectProducto');
             const selectedOption = selectProducto.options[selectProducto.selectedIndex];
             const unidad = selectedOption.getAttribute('data-unidad');
-            
+
             const formData = new FormData(formDevolucion);
             formData.set('unidad', unidad);
-            
+
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
             fetch(formDevolucion.action, {
@@ -221,40 +228,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: formData
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.mensaje);
-                    // Quitar producto devuelto del select
-                    const valueToRemove = selectedOption.value;
-                    if (selectedOption) selectedOption.remove();
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.mensaje);
+                        // Quitar producto devuelto del select
+                        const valueToRemove = selectedOption.value;
+                        if (selectedOption) selectedOption.remove();
 
-                    // Quitar pedido si no quedan productos
-                    const pedidoId = data.pedido_id;
-                    const restantes = Array.from(selectProducto.options).filter(o => o.value !== "");
-                    if (restantes.length === 0) {
-                        const selectPedido = document.getElementById('selectPedido');
-                        const optionPedido = Array.from(selectPedido.options).find(o => parseInt(o.value) === pedidoId);
-                        if (optionPedido) optionPedido.remove();
-                        document.getElementById('grupoProducto').style.display = 'none';
+                        // Quitar pedido si no quedan productos
+                        const pedidoId = data.pedido_id;
+                        const restantes = Array.from(selectProducto.options).filter(o => o.value !== "");
+                        if (restantes.length === 0) {
+                            const selectPedido = document.getElementById('selectPedido');
+                            const optionPedido = Array.from(selectPedido.options).find(o => parseInt(o.value) === pedidoId);
+                            if (optionPedido) optionPedido.remove();
+                            document.getElementById('grupoProducto').style.display = 'none';
+                            document.getElementById('grupoLote').style.display = 'none';
+                        }
+
+                        // Limpiar formulario
+                        formDevolucion.reset();
+                        fotosCapturadas = [];
+                        actualizarPreview();
+                        // Ocultar grupo de lote
                         document.getElementById('grupoLote').style.display = 'none';
+
+                        // 🔥 REACTIVAR BOTÓN DESPUÉS DE ÉXITO
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar Solicitud de Devolución';
+                        }
+                    } else {
+                        alert(data.mensaje);
+                        
+                        // 🔥 REACTIVAR BOTÓN EN CASO DE ERROR
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar Solicitud de Devolución';
+                        }
                     }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Ocurrió un error al enviar la devolución');
                     
-                    // Limpiar formulario
-                    formDevolucion.reset();
-                    fotosCapturadas = [];
-                    actualizarPreview();
-                    // Ocultar grupo de lote
-                    document.getElementById('grupoLote').style.display = 'none';
-                } else {
-                    alert(data.mensaje);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Ocurrió un error al enviar la devolución');
-            });
+                    // 🔥 REACTIVAR BOTÓN EN CASO DE ERROR DE RED
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar Solicitud de Devolución';
+                    }
+                });
         });
     }
-
 });

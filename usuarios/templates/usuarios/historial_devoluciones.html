@@ -15,13 +15,13 @@
     <div class="filtros-wrapper">
         <form method="GET" class="filtros-devoluciones">
             <div class="filtro-grupo">
-                <label>Buscar:</label>
+                <label class="label-devoluciones" >Buscar:</label>
                 <input type="text" name="buscar" placeholder="Usuario, producto o lote..." 
                        value="{{ busqueda|default:'' }}" class="input-buscar">
             </div>
 
             <div class="filtro-grupo">
-                <label>Estado:</label>
+                <label class="label-devoluciones" >Estado:</label>
                 <select name="estado">
                     <option value="">Todos</option>
                     <option value="Aprobada" {% if estado_filtro == 'Aprobada' %}selected{% endif %}>Aprobada</option>
@@ -30,7 +30,7 @@
             </div>
 
             <div class="filtro-grupo">
-                <label>Tiempo:</label>
+                <label class="label-devoluciones" >Tiempo:</label>
                 <select name="tiempo">
                     <option value="">Todos</option>
                     <option value="semana" {% if filtro_tiempo == 'semana' %}selected{% endif %}>Esta semana</option>
@@ -47,7 +47,7 @@
             </a>
         </form>
 
-        <a href="{% url 'usuarios:exportar_devoluciones_excel' %}?estado={{ estado_filtro|default:'' }}&tiempo={{ filtro_tiempo|default:'' }}&buscar={{ busqueda|default:'' }}" class="btn-exportar">
+        <a href="{% url 'usuarios:exportar_devoluciones_excel' %}?estado={{ estado_filtro|default:'' }}&tiempo={{ filtro_tiempo|default:'' }}&buscar={{ busqueda|default:'' }}" class="btn-exportar-historial">
             <i class="fa fa-file-excel"></i> Exportar a Excel
         </a>
     </div>
@@ -76,7 +76,6 @@
                 <th>Lote</th>
                 <th>Estado</th>
                 <th>Fecha Solicitud</th>
-                <th>Fecha Resolución</th>
                 <th>Admin</th>
                 <th>Comentario</th>
             </tr>
@@ -104,9 +103,8 @@
                 </td>
                 <td>{{ devolucion.fecha_solicitud|date:"d/m/Y H:i" }}</td>
                 {% with ultimo_historial=devolucion.historial.first %}
-                    <td>{{ ultimo_historial.fecha_cambio|date:"d/m/Y H:i"|default:"N/A" }}</td>
                     <td>{{ ultimo_historial.usuario_admin.nombre|default:"N/A" }}</td>
-                    <td>{{ ultimo_historial.comentario|default:"Sin comentario" }}</td>
+                    <td>{{ devolucion.motivo|default:"Sin motivo especificado" }}</td>
                 {% endwith %}
             </tr>
             {% endfor %}

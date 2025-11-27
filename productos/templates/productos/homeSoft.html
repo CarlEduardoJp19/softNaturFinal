@@ -1,285 +1,160 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+{% extends 'productos/baseP.html' %} 
+{% load static %} {% block styles %} 
+{{ block.super }}
+<link
+  rel="stylesheet"
+  href="{% static 'productos/css/homesoft.css' %}?v={{ timestamp }}"
+/>
+{% endblock %} 
+{% block content %}
+
+<section class="container-carousel">
+  <div class="carousel">
+    <img
+      class="carousel-image"
+      src="{% static 'productos/img/imgYoga.jpeg' %}"
     />
-    <link rel="stylesheet" href="{% static 'productos/css/homesoft.css' %}?v={{ timestamp }}" />
-  </head>
-  <style>
+    <img class="carousel-image" src="{% static 'productos/img/tienda.png' %}" />
+    <img
+      class="carousel-image"
+      src="{% static 'productos/img/canping.png' %}"
+    />
+    <img
+      class="carousel-image"
+      src="{% static 'productos/img/ingredientes.png' %}"
+    />
+    <img
+      class="carousel-image"
+      src="{% static 'productos/img/infografia.png' %}"
+    />
+  </div>
+  <button class="carousel-button prev">⟨</button>
+  <button class="carousel-button next">⟩</button>
+</section>
 
-  </style>
-  <body>
-    <header class="container-header">
-      <!-- Logo -->
-      <div class="container-logo">
-        <img class="logo" src="{% static 'productos/img/LOGOREAL.png' %}">
-      </div>
-      <div class="container-nav">
-        <nav class="container-menu">
-          <ul>
-            <li>
-              <a class="links-a" href="{% url 'productos:homesoft' %}"
-                >Inicio</a
-              >
-            </li>
-            <li>
-              <a class="links-a" href="{% url 'productos:producto' %}"
-                >Productos</a
-              >
-            </li>
-            <li>
-              <a class="links-a" href="{% url 'usuarios:contacto' %}"
-                >Contacto</a
-              >
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <!-- Links -->
-      <div class="container-links">
-        <a class="links-home" href="{% url 'usuarios:register'%}"
-          >Crear cuenta</a
-        >
-        <a class="links-home" href="{% url 'usuarios:login'%}"
-          >Iniciar sesión</a
-        >
-      </div>
-    </header>
-    <section class="container-carousel">
-      <div class="carousel">
-        <img class="logo carousel-image" src="{% static 'productos/img/imgYoga.jpeg' %}">
-        <img class="logo carousel-image" src="{% static 'productos/img/tienda.png' %}">
-        <img class="logo carousel-image" src="{% static 'productos/img/canping.png' %}">
-        <img class="logo carousel-image" src="{% static 'productos/img/ingredientes.png' %}">
-        <img class="logo carousel-image" src="{% static 'productos/img/infografia.png' %}">
-      </div>
-      <button class="carousel-button prev">⟨</button>
-      <button class="carousel-button next">⟩</button>
-    </section>
-    <section class="container-infoNosotros">
-      <div class="container-nosotros">
-        <h3 id="txt-big" style="text-align: center">Acerca de Nosotros</h3>
-        <p id="txt-nosotros">
-          Somos una empresa colombiana ubicada en Ibagué, con más de 23 años
-          ofreciendo productos naturales que mejoran la calidad de vida de
-          nuestros clientes. Todos nuestros productos cuentan con registro
-          INVIMA, lo que garantiza nuestro compromiso con la salud y el
-          bienestar.
-        </p>
-        <!-- Botón leer más -->
-        <div style="text-align: center; margin-top: 20px">
-          <a href="{% url 'usuarios:nosotros' %}" class="btn-leer-mas">
-            Leer más
-          </a>
-        </div>
-      </div>
+<section class="container-infoNosotros">
+  <div class="container-nosotros">
+    <h3 id="txt-big" style="text-align: center">Acerca de Nosotros</h3>
+    <p id="txt-nosotros">
+      Somos una empresa colombiana ubicada en Ibagué, con más de 23 años
+      ofreciendo productos naturales que mejoran la calidad de vida de nuestros
+      clientes. Todos nuestros productos cuentan con registro INVIMA.
+    </p>
 
-      <div class="container-bloquesTres">
-        <!-- Misión -->
-        <div class="bloques">
-          <h3>Misión</h3>
-          <p id="txt-nosotros">
-            Somos una empresa líder en la comercialización de productos
-            naturales e integrales, comprometida con la mejor calidad y
-            atención.
-          </p>
-          <a href="{% url 'usuarios:nosotros' %}#mision" class="btn-leer-mas">
-            Leer más
-          </a>
-        </div>
+    <div style="text-align: center; margin-top: 20px">
+      <a href="{% url 'usuarios:nosotros' %}" class="btn-leer-mas">Leer más</a>
+    </div>
+  </div>
 
-        <!-- Visión -->
-        <div class="bloques">
-          <h3>Visión</h3>
-          <p id="txt-nosotros">
-            Buscamos impactar al mundo con tratamientos integrales y ser
-            referentes regionales en el 2026.
-          </p>
-          <a href="{% url 'usuarios:nosotros' %}#vision" class="btn-leer-mas">
-            Leer más
-          </a>
-        </div>
-        <div class="bloques">
-          <h3>Valores</h3>
-          <p id="txt-nosotros">
-            Responsabilidad, honestidad y compromiso con el bienestar de
-            nuestros clientes.
-          </p>
-          <a href="{% url 'usuarios:nosotros' %}#vision" class="btn-leer-mas">
-            Leer más
-          </a>
-        </div>
-      </div>
-    </section>
-    <div class="container-img-grande">
-      <p id="txt-prodHome">Nuestros Productos</p>
-      <p id="txt-subHome">
-        Descubre nuestra amplia variedad de productos naturales, diseñados para
-        mejorar tu bienestar y cuidar tu salud. Cada artículo cuenta con
-        registro INVIMA y garantía de calidad.
-        Productos naturales y orgánicos para toda la familia. Calidad y
-        bienestar garantizados.
+  <div class="container-bloquesTres">
+    <div class="bloques">
+      <h3>Misión</h3>
+      <p>
+        Somos una empresa líder en la comercialización de productos naturales.
       </p>
-      <a
-        id="btn-catalogo"
-        href="{% url 'productos:producto' %}"
-        class="btn-leer-mas"
+      <a href="{% url 'usuarios:nosotros' %}#mision" class="btn-leer-mas"
+        >Leer más</a
       >
-        Ver Catálogo
-      </a>
-      <img class="logo" src="{% static 'productos/img/imgAbajo.jpeg' %}">
     </div>
 
-    <div class="container-prodHome">
-      <h3 class="titulo" id="txt-prod-us">PRODUCTOS MÁS VENDIDOS</h3>
-      <div class="productos-grid">
-          {% for producto in mas_vendidos %}
-          <div class="prod-card">
-            <img
-              class="img-newProduc"
-              src="{{ producto.imgProduc.url }}"
-              alt="{{ producto.nombProduc }}"
-            />
-            <p>{{ producto.nombProduc }}</p>
-            <a href="{% url 'productos:detalle' pk=producto.id %}" class="btn-prod"
-              >Leer más</a
-            >
-          </div>
-          {% empty %}
-          <p>No hay más productos vendidos aún</p>
-          {% endfor %}
-      </div>
+    <div class="bloques">
+      <h3>Visión</h3>
+      <p>Buscamos impactar al mundo con tratamientos naturales.</p>
+      <a href="{% url 'usuarios:nosotros' %}#vision" class="btn-leer-mas"
+        >Leer más</a
+      >
     </div>
 
-    <div class="container-comentarios">
-      <h3 id="txt-comentarios">Comentarios de Nuestros Clientes</h3>
-      {% if comentarios %}
-      <div class="lista-comentarios">
-        {% for c in comentarios %}
-        <div class="comentario-card">
-          <p class="comentario-usuario">
-            <strong>{{ c.usuario.username }}</strong>
-          </p>
-          <p class="comentario-texto">{{ c.comentario}}</p>
-          <p class="comentario-rating">
-            Servicio: {{ c.puntuacion_servicio }}/5⭐
-          </p>
-          <small class="comentario-fecha"
-            >{{ c.fecha_creacion|date:"Y-m-d" }}</small
-          >
-        </div>
-        {% endfor %}
-      </div>
-      <div class="carousel-buttons">
-        <button id="prev-comentario"><i class="fa-solid fa-chevron-left"></i></button>
-        <button id="next-comentario"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-      {% else %}
-      <p class="no-comentarios">Todavía no hay comentarios</p>
-      {% endif %}
+    <div class="bloques">
+      <h3>Valores</h3>
+      <p>Responsabilidad, honestidad y compromiso.</p>
+      <a href="{% url 'usuarios:nosotros' %}#valor" class="btn-leer-mas"
+        >Leer más</a
+      >
     </div>
-    {% block footer %}
-    <footer>
-      <div class="footer-content">
-        <div class="footer-info">
-          <p><strong>INFORMACIÓN DE LOS GIRASOLES</strong></p>
-          <p>Calle 14 # 1-28</p>
-          <p>Barrio Centro</p>
-          <p>Ibagué</p>
-          <p>Colombia</p>
-          <p>Contáctenos: 3212334148</p>
-        </div>
+  </div>
+</section>
 
-        <!-- Solo agrega esta sección del logo -->
-        <div class="footer-logo">
-          <img class="logo" src="{% static 'productos/img/LOGOREAL.png' %}">
-        </div>
+<div class="container-img-grande">
+  <p id="txt-prodHome">Nuestros Productos</p>
+  <p id="txt-subHome">
+   Descubre nuestra amplia variedad de productos naturales, diseñados para mejorar tu bienestar y cuidar tu salud.
+    Cada artículo cuenta con registro INVIMA y garantía de calidad. 
+   Productos naturales y orgánicos para toda la familia. Calidad y bienestar garantizados.
+  </p>
+  <a
+    id="btn-catalogo"
+    href="{% url 'productos:producto' %}"
+    class="btn-leer-mas"
+    >Ver Catálogo</a
+  >
+  <img src="{% static 'productos/img/imgAbajo.jpeg' %}" />
+</div>
 
-        <div class="footer-social">
-          <div class="redes-sociales">
-            <a
-              href="https://web.facebook.com/profile.php?id=100057407501877"
-              target="_blank"
-              aria-label="Facebook"
-            >
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a
-              href="https://www.tiktok.com/@tnlosgirasoles"
-              target="_blank"
-              aria-label="TikTok"
-            >
-              <i class="fab fa-tiktok"></i>
-            </a>
-            <a
-              href="https://www.instagram.com/tienda_naturista_los_girasoles"
-              target="_blank"
-              aria-label="Instagram"
-            >
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a
-              href="https://wa.me/573106194290"
-              class="btn-whatsapp"
-              target="_blank"
-              title="¡Chatea con nosotros en WhatsApp!"
-            >
-              <i class="fab fa-whatsapp"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="footer-menu">
-          <div class="footer-cont">
-            <p>Home</p>
-            <a class="links-uno" href="{% url 'usuarios:nosotros' %}"
-              >Nosotros</a
-            >
-            <a class="links-uno" href="{% url 'productos:producto' %}"
-              >Productos</a
-            >
-            <a class="links-uno" href="{% url 'usuarios:contacto' %}"
-              >Contacto</a
-            >
-          </div>
-        </div>
-
-        <div class="footer-copyright">
-          <h3>&copy; Página Tienda Naturista Los Girasoles 2025</h3>
-        </div>
-      </div>
-    </footer>
-    
-    <button id="chatbot-toggle" class="chatbot-btn">💬 Chat Naturista</button>
-
-    <!-- Caja del chatbot -->
-    <div id="chatbot-box" class="chatbot-box">
-        <div class="chatbot-header">
-            <h3>Asesor Naturista</h3>
-            <button class="cerrar-btn" id="chatbot-close">✖</button>
-        </div>
-
-        <div id="chat-messages" class="chat-messages"></div>
-
-        <form id="chat-form" class="chat-form">
-            {% csrf_token %}
-            <input type="text" id="chat-input" placeholder="Pregunta sobre productos naturistas..." required>
-            <button type="submit">Enviar</button>
-        </form>
+<div class="container-prodHome">
+  <h3 class="titulo" id="txt-prod-us">PRODUCTOS MÁS VENDIDOS</h3>
+  <div class="productos-grid">
+    {% for producto in mas_vendidos %}
+    <div class="prod-card">
+      <img
+        class="img-newProduc"
+        src="{{ producto.imgProduc.url }}"
+        alt="{{ producto.nombProduc }}"
+      />
+      <p>{{ producto.nombProduc }}</p>
+      <a href="{% url 'productos:detalle' pk=producto.id %}" class="btn-prod"
+        >Leer más</a
+      >
     </div>
-    {% endblock %}
+    {% empty %}
+    <p>No hay productos vendidos aún</p>
+    {% endfor %}
+  </div>
+</div>
 
-    {% block scripts %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
-    <script src="{% static 'productos/js/home.js' %}"></script>
-    <script src="{% static 'productos/js/chatbot.js' %}"></script>
-    {% endblock %}
+<div class="container-comentarios">
+  <h3 id="txt-comentarios">Comentarios de Nuestros Clientes</h3>
 
-  </body>
-</html>
+  {% if comentarios %}
+  <div class="lista-comentarios">
+    {% for c in comentarios %}
+    <div class="comentario-card">
+      <p><strong>{{ c.usuario.username }}</strong></p>
+      <p>{{ c.comentario }}</p>
+      <p>Servicio: {{ c.puntuacion_servicio }}/5⭐</p>
+      <small>{{ c.fecha_creacion|date:"Y-m-d" }}</small>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>Todavía no hay comentarios</p>
+  {% endif %}
+</div>
+<button id="chatbot-toggle" class="chatbot-btn">💬</button>
+<!-- Caja del chatbot -->
+<div id="chatbot-box" class="chatbot-box">
+  <div class="chatbot-header">
+    <h3>
+      <i class="fa-solid fa-seedling" style="margin-right: 5px"></i>Asesor
+      Naturista
+    </h3>
+    <button class="cerrar-btn" id="chatbot-close">✖</button>
+  </div>
+  <div id="chat-messages" class="chat-messages"></div>
+  <form id="chat-form" class="chat-form">
+    {% csrf_token %}
+    <input
+      type="text"
+      id="chat-input"
+      placeholder="Pregunta sobre productos naturistas..."
+      required
+    />
+    <button type="submit">Enviar</button>
+  </form>
+</div>
+
+{% endblock %} {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+<script src="{% static 'productos/js/home.js' %}"></script>
+<script src="{% static 'productos/js/chatbot.js' %}"></script>
+{% endblock %}

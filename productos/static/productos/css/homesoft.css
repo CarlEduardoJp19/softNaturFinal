@@ -1,4 +1,4 @@
-    body {
+body {
         margin: 0;
         padding: 0;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -85,68 +85,7 @@
         background: #f29727;
     }
 
-    /* HEADER */
-    .container-header {
-        width: 100%;
-        opacity: 0.99;
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px 40px;
-        position: relative;
-        /* para poder posicionar los links */
-    }
-
-    .container-logo {
-        text-align: center;
-    }
-
-    .container-menu ul {
-        list-style: none;
-        /* quita los punticos */
-        display: flex;
-        gap: 30px;
-        padding: 0;
-        margin: 15px 0 0 0;
-        /* espacio con el logo */
-    }
-
-    .container-links {
-        position: absolute;
-        top: 65px;
-        right: 120px;
-        /* espacio desde la derecha */
-        display: flex;
-        gap: 20px;
-        /* espacio entre links */
-    }
-
-    .links-home {
-        font-weight: bold;
-        color: rgb(205, 168, 6);
-        text-decoration: none;
-    }
-
-    .links-a {
-        font-weight: bold;
-        color: rgb(205, 168, 6);
-        text-decoration: none;
-    }
-
-    .container-nav {
-        display: flex;
-    }
-
-    .container-menu {
-        display: flex;
-        flex-direction: column;
-    }
-
-    #img-logo {
-        width: 300px;
-    }
-
+    
     /* ----------------------------------------------------------------- */
     /* PARTE DEL CARROUSEL */
 
@@ -816,441 +755,7 @@
         font-weight: bold;
         color: #333;
     }
-
-    /* ========================= */
-    /* RESPONSIVE DESIGN */
-    /* ========================= */
-
-    /* 📱 Móviles */
-    @media (max-width: 768px) {
-
-        /* Header */
-        .logo {
-            width: 180px;
-            margin-top: 140px;
-            margin-left: -150px;
-        }
-
-        .container-logo {
-            margin-left: 150px;
-        }
-
-        .container-header {
-            padding: 10px 15px;
-        }
-
-        .container-menu ul {
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .container-links {
-            position: static;
-            margin-top: 10px;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* Carrusel principal */
-        .carousel-image {
-            height: 1000px;
-        }
-
-        #txt-prodHome {
-            font-size: 28px;
-        }
-
-        #txt-subHome {
-            font-size: 14px;
-            padding: 0 15px;
-        }
-
-        #btn-catalogo {
-            font-size: 14px;
-            padding: 8px 14px;
-        }
-
-        /* Sección Nosotros */
-        .container-bloquesTres {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .bloques {
-            width: 90%;
-        }
-
-        /* Productos destacados */
-        .carousel-track {
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-        }
-
-        .prod-card {
-            flex: 0 0 45%;
-        }
-
-        /* Comentarios */
-        .lista-comentarios {
-            flex-direction: column;
-            gap: 20px;
-            padding: 0 15px;
-        }
-
-        /* Footer */
-        .footer-content {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .footer-info {
-            text-align: center;
-            margin: 0;
-        }
-
-        .footer-social {
-            margin: 20px 0 0 0;
-            justify-content: center;
-        }
-
-        .footer-menu {
-            justify-content: center;
-        }
-
-        .footer-cont {
-            align-items: center;
-        }
-
-        footer {
-            padding: 25px;
-            text-align: center;
-        }
-
-        footer .footer-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-        }
-
-        footer .footer-info,
-        footer .footer-logo,
-        footer .footer-menu {
-            width: 100%;
-        }
-
-        footer img {
-            width: 100px;
-        }
-
-        footer .footer-menu a {
-            display: block;
-            margin: 8px 0;
-        }
-
-        footer .footer-copyright {
-            font-size: 14px;
-            margin-top: 20px;
-        }
-    }
-
-    /* 💻 Tablets */
-    @media (min-width: 769px) and (max-width: 1024px) {
-        .prod-card {
-            flex: 0 0 30%;
-        }
-
-        #txt-prodHome {
-            font-size: 36px;
-        }
-
-        #txt-subHome {
-            font-size: 15px;
-        }
-
-        .bloques {
-            width: 45%;
-        }
-    }
-
-    /* 💻 Ajuste especial para pantallas intermedias tipo Nest Hub */
-    @media (min-width: 1000px) and (max-width: 1100px) {
-        .container-comentarios {
-            padding-bottom: 100px;
-            /* agrega espacio inferior */
-            margin-bottom: 40px;
-        }
-
-        .lista-comentarios {
-            flex-wrap: wrap;
-            gap: 40px;
-            justify-content: center;
-        }
-
-        .comentario-card {
-            width: 200px;
-            /* se ajustan las tarjetas para que no se salgan del contenedor */
-            min-height: 150px;
-        }
-    }
-
-    /* ===== Diseño responsivo para Nest Hub y pantallas grandes ===== */
-    @media screen and (min-width: 1024px) {
-        .contenedor-bloques {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
-            gap: 30px;
-            /* espacio entre los tres bloques */
-            flex-wrap: nowrap;
-            /* evita que se bajen */
-        }
-
-        .bloques {
-            width: 300px;
-            /* asegura que los tres quepan alineados */
-        }
-    }
-
-    @media screen and (min-width: 1024px) {
-        .container-links {
-            margin-top: 20px;
-        }
-
-        footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 40px 80px;
-            flex-wrap: nowrap;
-        }
-
-        footer .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            width: 100%;
-            gap: 40px;
-        }
-
-        footer .footer-info,
-        footer .footer-logo,
-        footer .footer-menu {
-            width: 30%;
-        }
-
-        footer .footer-logo {
-            text-align: center;
-        }
-
-        footer img {
-            width: 130px;
-            height: auto;
-        }
-
-        footer .footer-copyright {
-            text-align: center;
-            margin-top: 25px;
-            width: 100%;
-        }
-
-        #img-logo {
-            margin-left: -300px;
-        }
-    }
-
-    /* 📱 Ajuste específico para pantallas pequeñas tipo Samsung A51/A71 */
-    @media screen and (max-width: 430px) {
-
-        /* Header */
-        .logo {
-            width: 150px;
-            margin-left: 170px;
-
-        }
-
-        .carousel-button {
-            top: 30%;
-            transform: translateY(-50%);
-        }
-
-        .carousel-button.prev {
-            left: 10px;
-        }
-
-        .carousel-button.next {
-            right: 10px;
-            /* separación del borde derecho */
-        }
-
-        .footer-logo {
-            width: 100px;
-            margin-left: -30px;
-            display: block;
-        }
-
-        .container-logo {
-            margin-left: -10px;
-        }
-
-        .container-menu ul {
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
-            align-items: center;
-        }
-
-        .container-links {
-            flex-direction: column;
-            gap: 5px;
-            margin-top: 10px;
-        }
-
-        /* Carrusel */
-        .carousel-image {
-            height: 400px;
-        }
-
-        #txt-prodHome {
-            font-size: 22px;
-        }
-
-        #txt-subHome {
-            font-size: 13px;
-            width: 90%;
-        }
-
-        #btn-catalogo {
-            font-size: 13px;
-            padding: 6px 12px;
-        }
-
-        .container-infoNosotros {
-            margin-bottom: 0;
-            margin-top: -300px;
-        }
-
-        .container-bloquesTres {
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-
-        }
-
-        .bloques {
-            width: 90%;
-            margin-bottom: 10px;
-        }
-
-        /* Productos */
-        .prod-card {
-            flex: 0 0 80%;
-            margin: 0 auto;
-        }
-
-        /* Comentarios */
-        .comentario-card {
-            width: 90%;
-        }
-
-        /* Footer */
-        footer {
-            padding: 25px 10px;
-        }
-
-        .footer-content {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 20px;
-        }
-
-        .footer-info,
-        .footer-menu {
-            width: 100%;
-            text-align: center;
-        }
-
-        .redes-sociales {
-            margin-top: 10px;
-        }
-
-        .footer-copyright h3 {
-            font-size: 13px;
-        }
-
-        .footer-logo {
-            width: 300px;
-            margin-left: 150px;
-            display: block;
-        }
-
-    }
-
-    @media screen and (max-width: 912px) {
-        .container-links {
-            margin-top: 20px;
-        }
-
-        #img-logo {
-            margin-left: -150px;
-        }
-
-        .footer-logo {
-            width: 300px;
-            margin-left: 70px;
-            display: block;
-        }
-
-    }
-
-    @media screen and (max-width: 344px) {
-        .logo {
-            margin-left: -140px;
-        }
-
-        .container-logo {
-            margin-left: 140px;
-        }
-
-        .container-infoNosotros {
-            margin-top: -240px;
-        }
-    }
-
-
-    @media screen and (max-width: 1280px) {
-        .container-infoNosotros {
-            margin-top: 30px;
-        }
-
-    }
-
-    html,
-    body {
-        width: 100%;
-        overflow-x: hidden !important;
-    }
-
-    * {
-        box-sizing: border-box;
-    }
-
-
-    .container-carousel,
-    .container-header,
-    .container-infoNosotros,
-    .container-bloquesTres,
-    .container-prodHome,
-    .container-comentarios,
-    footer {
-        overflow-x: hidden;
-    }
-
+ /* VARIABLES DE COLOR */
 :root {
     --amarillo: rgb(205, 168, 6);
 }
@@ -1261,7 +766,7 @@
     bottom: 20px;
     right: 25px;
     background: var(--amarillo);
-    color: #292929;
+    color: 292929;
     padding: 12px 18px;
     border-radius: 50px;
     border: none;
@@ -1285,8 +790,8 @@
     position: fixed;
     bottom: 95px;
     right: 25px;
-    width: 320px;
-    height: 450px; /* ← Aumentado */
+    width: 300px;
+    height: 300px;
     background: #ffffff;
     border-radius: 14px;
     box-shadow: 0 6px 25px rgba(0,0,0,0.25);
@@ -1294,12 +799,10 @@
     display: none;
     z-index: 9999;
     animation: fadeUp 0.2s ease-out;
-    display: flex; /* ← Agregado */
-    flex-direction: column; /* ← Agregado */
 }
 
 .chatbot-box.visible {
-    display: flex; /* ← Cambiado de block a flex */
+    display: block;
 }
 
 /* Animación suave */
@@ -1311,55 +814,43 @@
 /* HEADER */
 .chatbot-header {
     background: var(--amarillo);
-    color: #292929;
-    padding: 12px 14px;
+    color: 292929;
+    padding: 10px 14px;
     font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 15px;
-    flex-shrink: 0; /* ← Agregado */
 }
 
 .cerrar-btn {
     background: transparent;
     border: none;
     font-size: 18px;
-    color: #292929;
+    color: 292929;
     cursor: pointer;
 }
 
-/* MENSAJES */
-.chat-messages {
-    flex: 1; /* ← Cambiado para ocupar espacio disponible */
-    overflow-y: auto;
-    padding: 15px;
-    background: #fafafa;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
 
 .mensaje {
-    padding: 10px 12px;
+    margin-bottom: 10px;
+    padding: 8px 10px;
     border-radius: 10px;
     font-size: 13.5px;
-    max-width: 80%;
-    word-wrap: break-word;
 }
 
 /* Usuario */
 .mensaje.usuario {
     background: #fff4c4;
-    align-self: flex-end; /* ← Alinear a la derecha */
     text-align: right;
+    margin-left: 30px;
 }
 
 /* Bot */
 .mensaje.bot {
     background: white;
     border-left: 3px solid var(--amarillo);
-    align-self: flex-start; /* ← Alinear a la izquierda */
+    margin-right: 30px;
 }
 
 /* Imagen bot */
@@ -1378,43 +869,203 @@
     align-items: center;
     gap: 12px;
     box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
-    flex-shrink: 0; /* ← Agregado */
+}
+
+
+.chat-messages {
+    max-height: calc(300px - 70px); /* ajusta según altura del formulario */
+    overflow-y: auto;
+    padding: 10px;
+    background: #fafafa;
+    box-sizing: border-box;
 }
 
 .chat-form input {
     flex: 1;
     border-radius: 8px;
     border: 1px solid #ccc;
-    padding: 9px 12px;
+    padding: 7px 10px;
     font-size: 13px;
 }
 
 .chat-form button {
     background: var(--amarillo);
-    color: #292929;
+    color: 292929;
     border: none;
-    padding: 9px 14px;
+    padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
     font-weight: bold;
-    transition: 0.2s;
 }
 
-.chat-form button:hover {
-    opacity: 0.85;
-}
+@media (max-width: 1024px) {
 
-/* Scroll personalizado */
-.chat-messages::-webkit-scrollbar {
-    width: 6px;
-}
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 
-.chat-messages::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
+    .carousel {
+        height: 450px;
+    }
 
-.chat-messages::-webkit-scrollbar-thumb {
-    background: var(--amarillo);
-    border-radius: 10px;
+    .carousel-image {
+        height: 450px;
+    }
+
+    #txt-prodHome {
+        font-size: 38px;
+    }
+
+    .container-imgsHome {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .imgsHome {
+        width: 90%;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .footer-info {
+        text-align: center;
+        margin-left: 0;
+    }
+
+    .footer-menu {
+        justify-content: center;
+    }
+}
+@media (max-width: 768px) {
+
+    .productos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #txt-prod-us {
+        font-size: 22px;
+    }
+
+    .prod-card {
+        max-width: 90%;
+    }
+
+    /* Carrusel */
+    .carousel {
+        height: 350px;
+    }
+
+    .carousel-image {
+        height: 350px;
+    }
+
+    .carousel-button {
+        font-size: 1.5rem;
+        padding: 8px;
+    }
+
+    /* Texto sobre imagen grande */
+    #txt-prodHome {
+        font-size: 32px;
+        top: 25%;
+    }
+
+    #txt-subHome {
+        font-size: 14px;
+        top: 45%;
+        padding: 0 20px;
+    }
+
+    #btn-catalogo {
+        top: 65%;
+    }
+
+    /* Sección productos */
+    .container-imgsHome {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .imgsHome {
+        width: 95%;
+        font-size: 18px;
+    }
+
+    /* Comentarios */
+    #txt-comentarios {
+        font-size: 1.4rem;
+    }
+
+    .comentario-card {
+        padding: 15px;
+    }
+
+    /* Footer */
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        text-align: center;
+    }
+
+    .footer-info {
+        margin: 0;
+        text-align: center;
+    }
+
+    .footer-logo {
+        position: static;
+        transform: none;
+    }
+
+    .footer-menu {
+        justify-content: center;
+    }
+}
+@media (max-width: 480px) {
+
+    #txt-prodHome {
+        font-size: 26px;
+    }
+
+    #txt-subHome {
+        font-size: 13px;
+    }
+
+    .prod-card p {
+        font-size: 14px;
+    }
+
+    .btn-prod {
+        padding: 7px 12px;
+        font-size: 14px;
+    }
+
+    .carousel {
+        height: 280px;
+    }
+
+    .carousel-image {
+        height: 280px;
+    }
+
+    .imgsHome {
+        font-size: 16px;
+    }
+
+    .footer-logo img {
+        height: 70px;
+    }
+
+    .redes-sociales a {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
 }

@@ -1,70 +1,75 @@
 from django.urls import path, reverse_lazy
-from django.conf import settings
 from django.contrib.auth import views as auth_views
-from . import views
+from . import views  # ← Para devoluciones (views.py original)
+from .views_refactored import (  # ← Para todo lo refactorizado
+    auth_views as custom_auth_views,  # Renombrado para evitar conflicto
+    public_views,
+    dashboard_views,
+    admin_views,
+    perfil_views,
+    exportacion_views,
+)
 
 app_name = 'usuarios'
 
 urlpatterns = [
-    # Autenticación
-    path('login/', views.login_view, name="login"),
-    path('register/', views.register_view, name="register"),
-    path('logout/', views.logout_view, name="logout"),
-    path('loginAdm/', views.login_admin, name="loginAdmin"),
-
-    # Perfil y usuario
-    path('editar-perfil/', views.editar_perfil, name='editar_perfil'),
-    path('mis-pedidos/', views.mis_pedidos, name='mis_pedidos'),
-
-    # Páginas informativas
-    path('contacto/', views.contacto, name="contacto"),
-    path('nosotros/', views.nosotros, name="nosotros"),
-
-    # Panel y gestión
-    path('dashboard/', views.dashboard, name="dashboard"),
-    path('gstUsuarios/', views.gstUsuarios, name="gstUsuarios"),
-    path('exportar_usuarios_excel/', views.exportar_usuarios_excel, name="exportar_usuarios_excel"),
-    path('', views.gstUsuarios, name='gstUsuarios'),
-
-    # Usuarios
-    path('cambiar_estado/<int:usuario_id>/', views.cambiar_estado_usuario, name='cambiar_estado_usuario'),
-    path('agregar/', views.agregar_usuario, name='agregar_usuario'),
-    path("editar/<int:pk>/", views.editar_usuario, name="editar_usuario"),
-
-    # Informes
-    path('informe-calificaciones/', views.informe_calificaciones, name='informe_calificaciones'),
-    path('ventas/', views.informe_ventas, name='informe_ventas'),
-    path('exportar-ventas-excel/', views.exportar_ventas_excel, name='exportar_ventas_excel'),
-    path('productos-mas-vendidos/', views.productos_mas_vendidos_view, name="productos_mas_vendidos"),
-    path('usuarios-frecuentes/', views.usuarios_frecuentes_view, name="usuarios_frecuentes"),
-
-    # Comentarios
-    path('comentario/<int:id>/aprobar/', views.aprobar_comentario, name="aprobar_comentario"),
-    path('comentario/<int:id>/rechazar/', views.rechazar_comentario, name="rechazar_comentario"),
-
-    # Pedidos
-    path('pedidos/', views.pedidos_view, name="pedidos"),
-    path('exportar-pedidos-excel/', views.exportar_pedidos_excel, name='exportar_pedidos_excel'),
-    path('pedidos/<int:pedido_id>/cambiar-estado/', views.cambiar_estado_pedido, name='cambiar_estado_pedido'),
-    path('detalle_pedido/<int:pedido_id>/', views.detalle_pedido, name='detalle_pedido'),
-    path('cambiar_estado_pedido/<int:pedido_id>/', views.cambiar_estado_pedido, name='cambiar_estado_pedido'),
-
+    # ==================== AUTENTICACIÓN ====================
+    path('login/', custom_auth_views.login_view, name="login"),
+    path('register/', custom_auth_views.register_view, name="register"),
+    path('logout/', custom_auth_views.logout_view, name="logout"),
+    path('loginAdm/', custom_auth_views.login_admin, name="loginAdmin"),
+    
     # Activación y verificación
-    path('activar/<uidb64>/<token>/', views.activar_cuenta, name="activar"),
-    path('enviar-codigo-verificacion/', views.enviar_codigo_verificacion, name='enviar_codigo'),
-    path('verificar-codigo/', views.verificar_codigo, name='verificar_codigo'),
+    path('activar/<uidb64>/<token>/', custom_auth_views.activar_cuenta, name="activar"),
+    path('enviar-codigo-verificacion/', custom_auth_views.enviar_codigo_verificacion, name='enviar_codigo'),
+    path('verificar-codigo/', custom_auth_views.verificar_codigo, name='verificar_codigo'),
 
-    # ====================== URLS DE DEVOLUCIONES (ADMIN) - AGREGADAS ======================
+    # ==================== PERFIL Y USUARIO ====================
+    path('editar-perfil/', perfil_views.editar_perfil, name='editar_perfil'),
+    path('mis-pedidos/', perfil_views.mis_pedidos, name='mis_pedidos'),
+    path('guardar-direccion/', perfil_views.guardar_direccion, name='guardar_direccion'),
+    path('editar-direccion/', perfil_views.editar_direccion, name='editar_direccion'),
+
+    # ==================== PÁGINAS INFORMATIVAS ====================
+    path('contacto/', dashboard_views.contacto, name="contacto"),
+    path('nosotros/', public_views.nosotros, name="nosotros"),
+
+    # ==================== PANEL Y GESTIÓN (ADMIN) ====================
+    path('dashboard/', dashboard_views.dashboard, name="dashboard"),
+    path('gstUsuarios/', admin_views.gstUsuarios, name="gstUsuarios"),
+    path('', admin_views.gstUsuarios, name='gstUsuarios'),  # Ruta raíz
+
+    # ==================== GESTIÓN DE USUARIOS (ADMIN) ====================
+    path('exportar_usuarios_excel/', exportacion_views.exportar_usuarios_excel, name="exportar_usuarios_excel"),
+    path('cambiar_estado/<int:usuario_id>/', admin_views.cambiar_estado_usuario, name='cambiar_estado_usuario'),
+    path('agregar/', admin_views.agregar_usuario, name='agregar_usuario'),
+    path("editar/<int:pk>/", admin_views.editar_usuario, name="editar_usuario"),
+
+    # ==================== INFORMES (ADMIN) ====================
+    path('informe-calificaciones/', admin_views.informe_calificaciones, name='informe_calificaciones'),
+    path('ventas/', admin_views.informe_ventas, name='informe_ventas'),
+    path('exportar-ventas-excel/', exportacion_views.exportar_ventas_excel, name='exportar_ventas_excel'),
+    # ❌ ELIMINADAS (ya no existen): productos_mas_vendidos_view, usuarios_frecuentes_view
+
+    # ==================== COMENTARIOS/CALIFICACIONES ====================
+    path('comentario/<int:id>/aprobar/', admin_views.aprobar_comentario, name="aprobar_comentario"),
+    path('comentario/<int:id>/rechazar/', admin_views.rechazar_comentario, name="rechazar_comentario"),
+
+    # ==================== PEDIDOS (ADMIN) ====================
+    path('pedidos/', admin_views.pedidos_view, name="pedidos"),
+    path('exportar-pedidos-excel/', exportacion_views.exportar_pedidos_excel, name='exportar_pedidos_excel'),
+    path('pedidos/<int:pedido_id>/cambiar-estado/', admin_views.cambiar_estado_pedido, name='cambiar_estado_pedido'),
+    path('detalle_pedido/<int:pedido_id>/', admin_views.detalle_pedido, name='detalle_pedido'),
+    path('cambiar_estado_pedido/<int:pedido_id>/', admin_views.cambiar_estado_pedido, name='cambiar_estado_pedido'),  # Duplicada (se puede eliminar)
+
+    # ==================== DEVOLUCIONES (views.py original - SIN TOCAR) ====================
     path('gst-devoluciones/', views.gst_devoluciones, name='gst_devoluciones'),
     path('historial-devoluciones/', views.historial_devoluciones, name='historial_devoluciones'),
     path('aprobar-devolucion/<int:devolucion_id>/', views.aprobar_devolucion, name='aprobar_devolucion'),
     path('rechazar-devolucion/<int:devolucion_id>/', views.rechazar_devolucion, name='rechazar_devolucion'),
     path('exportar-devoluciones-excel/', views.exportar_devoluciones_excel, name='exportar_devoluciones_excel'),
-    # ====================== FIN URLS DEVOLUCIONES ======================
-    path('guardar-direccion/', views.guardar_direccion, name='guardar_direccion'),
-    path('editar-direccion/', views.editar_direccion, name='editar_direccion'),  # 👈 NUEVA RUTA AGREGADA
 
-    # Recuperación de contraseña
+    # ==================== RECUPERACIÓN DE CONTRASEÑA (Django Auth) ====================
     path(
         'password_reset/',
         auth_views.PasswordResetView.as_view(
@@ -97,3 +102,4 @@ urlpatterns = [
         name='password_reset_complete'
     ),
 ]
+

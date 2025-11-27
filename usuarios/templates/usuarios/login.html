@@ -9,45 +9,44 @@
     <link rel="stylesheet" href="{% static 'usuarios/css/loginAdm-login-register.css' %}" />
 </head>
 
-
 <body>
     <a href="{% url 'productos:producto' %}" class="btn-volver">← Volver</a>
     <div class="contenedor-form">
         <img src="{% static 'usuarios/img/loginimg.png' %}" alt="Logo Unidos pensando en su salud">
-        <!-- 🔥 AQUI AGREGAS EL MENSAJE DE INACTIVIDAD -->
         {% if messages %}
-            {% for message in messages %}
-                <div class="alerta-inactividad {{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alerta-inactividad {{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
         {% endif %}
-        <!-- 🔥 FIN -->
-        <form method="post" class="contenedor-login">
+        <form method="post" class="contenedor-login" id="loginForm">
             {% csrf_token %}
-
             <label for="email" class="btn-txt">Email:</label>
             {{ form.email }}
-
             <label for="password" class="btn-txt">Contraseña:</label>
             {{ form.password }}
-
-            <button type="submit" class="btn-ingresar">Ingresar</button>
-
-            <!-- Enlace para recuperar contraseña -->
+            <button type="submit" class="btn-ingresar" id="btnIngresar">Ingresar</button>
             <div class="txt-reset">
                 <a href="{% url 'usuarios:password_reset' %}">¿Olvidaste tu contraseña?</a>
             </div>
-
-            <!-- Enlace de registro -->
             <div class="txt-register">
                 <p>¿Aún no tienes cuenta? <a class="edit-rgs" href="{% url 'usuarios:register' %}">Regístrate</a></p>
             </div>
         </form>
-
         {% if mensaje %}
         <p class="mensaje-error">{{ mensaje }}</p>
         {% endif %}
     </div>
+
+    <script>
+        // Desactivar botón al enviar el formulario
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            const btn = document.getElementById('btnIngresar');
+            btn.disabled = true;
+            btn.textContent = 'Ingresando...';
+        });
+    </script>
 </body>
+
 </html>

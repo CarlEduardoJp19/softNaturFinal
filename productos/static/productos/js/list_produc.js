@@ -34,6 +34,15 @@ function toggleCategorias() {
 
 function abrirModal(id) {
     document.getElementById(id).style.display = "flex";
+
+    if (id === 'modalAgregarProducto') {
+        const form = document.getElementById('formProducto');
+        if (form) {
+            form.reset();
+            const errorDivs = form.querySelectorAll('.form-errors, .errorlist');
+            errorDivs.forEach(div => div.innerHTML = '');
+        }
+    }
 }
 
 function cerrarModal(id) {

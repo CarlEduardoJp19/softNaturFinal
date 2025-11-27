@@ -3,15 +3,15 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'usuarios/css/panel-contacto-dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'productos/css/estilos.css' %}">
 {% endblock %}
 
 {% block content %}
 
 <!-- Banner principal -->
 <div class="banner-nosotros" style="
-    background: url('/media/uploads/products/acerca.jpeg') no-repeat center
-      center/cover;
-  "></div>
+    background: url('{% static "usuarios/img/acerca.jpeg" %}') no-repeat center center/cover;">
+</div>
 
 <!-- Contenido -->
 <div class="contenedor-nosotros">
@@ -30,9 +30,8 @@
 
 <!-- Banner misión -->
 <div class="banner-nosotros" style="
-    background: url('/media/uploads/products/mision2.jpeg') no-repeat center
-      center/cover;
-  "></div>
+    background: url('{% static "usuarios/img/mision2.jpeg" %}') no-repeat center center/cover;">
+</div>
 
 <div class="contenedor-nosotros">
     <h2>Nuestra Misión</h2>
@@ -47,9 +46,8 @@
 
 <!-- Banner visión -->
 <div class="banner-nosotros" style="
-    background: url('/media/uploads/products/vision2.jpeg') no-repeat center
-      center/cover;
-  "></div>
+    background: url('{% static "usuarios/img/vision2.jpeg" %}') no-repeat center center/cover;">
+</div>
 
 <div class="contenedor-nosotros">
     <h2>Nuestra Visión</h2>
