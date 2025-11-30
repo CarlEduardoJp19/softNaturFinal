@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn Config.wsgi --log-file -
+web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn Config.wsgi --log-file - --timeout 120
