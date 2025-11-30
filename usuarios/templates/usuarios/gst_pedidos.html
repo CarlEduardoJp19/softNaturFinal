@@ -2,7 +2,6 @@
 {% load static %}
 {% csrf_token %}
 {% block styles %}
-<link rel="stylesheet" href="{% static 'usuarios/css/mis_pedidos-gst_pedidos-ventas.css' %}">
 <link rel="stylesheet" href="{% static 'usuarios/css/botones_gst_pedidos.css' %}">
 {% endblock %}
 
@@ -35,10 +34,13 @@
   </div>
 
   <div class="table-container">
-    <a href="{% url 'usuarios:exportar_pedidos_excel' %}" class="btn-exportar">
-      <i class="fa fa-file-excel"></i> Exportar a Excel
-    </a>
     <div class="filtros-rapidos">
+      <div class="export-container">
+        <button class="btn-exportar">
+          <i class="fas fa-file-excel"></i> Exportar a Excel
+        </button>
+      </div>
+
       <h3>Filtros rápidos</h3>
       <div class="filtros-buttons">
         <a href="#" class="filtro-btn todos active" onclick="filtrar('todos'); return false;">Todos</a>
@@ -77,6 +79,7 @@
             {% endif %}
           </td>
           <td>{{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</td>
+
           <td>
             <!-- Solo mostrar estos 3 botones SI NO está entregado -->
             {% if pedido.estado|lower != 'entregado' %}
@@ -99,7 +102,7 @@
               <i class="fa fa-eye"></i> Ver
             </button>
           </td>
-          </td>
+
         </tr>
         {% empty %}
         <tr>

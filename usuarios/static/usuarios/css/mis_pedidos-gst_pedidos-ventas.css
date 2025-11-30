@@ -1119,427 +1119,69 @@
       padding: 15px;
     }
   }
+  /* ============================= */
+/*      RESPONSIVE GENERAL       */
+/* ============================= */
 
-/* ============================================
-   RESPONSIVE SIMPLIFICADO - PEDIDOS Y VENTAS
-   Solo 3 breakpoints principales
-   ============================================ */
-   
-
-/* 💻 Tablets y pantallas medianas (max 1024px) */
-@media (max-width: 1024px) {
-    .container,
-    .container-ventas {
-        max-width: 100%;
-        padding: 20px;
-        margin-left: 0;
-        margin-right: 0;
-    }
-
-    h1 {
-        font-size: 26px;
-        margin: 15px 0 25px 0;
-    }
-
-    /* Stats cards responsive */
-    .stats-container,
-    .resumen-cards-ventas {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-    }
-
-    .stat-card .numero,
-    .card-value {
-        font-size: 28px;
-    }
-
-    /* Filtros */
-    .filtros-rapidos,
-    .busqueda-ventas {
-        padding: 15px;
-        margin-left: 0;
-    }
-
-    .filtros-container-ventas {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-
-    .search-input,
-    .search-input-ventas {
-        width: 100%;
-        padding: 11px 14px;
-        font-size: 14px;
-    }
-
-    .search-container {
-        padding: 15px;
-        margin-left: 0;
-    }
-
-    /* Botones exportar */
-    .btn-exportar,
-    .btn-export-ventas {
-        padding: 10px 20px;
-        font-size: 15px;
-    }
-
-    /* Tabla */
-    table {
-        font-size: 14px;
-    }
-
-    th, td {
-        padding: 12px 10px;
-        font-size: 14px;
-    }
-
-    /* Modal */
-    .modal-content {
-        width: 92%;
-        margin: 5% auto;
-    }
-
-    .modal-header {
-        padding: 20px 25px;
-    }
-
-    .modal-body {
-        padding: 25px;
-    }
+/* Laptops grandes */
+@media (max-width: 1400px) {
+  .container-ventas {
+    max-width: 1000px;
+  }
 }
 
-/* 📱 Móviles y tablets pequeñas (max 768px) */
+/* Laptops medianas */
+@media (max-width: 1200px) {
+  .container-ventas {
+    max-width: 900px;
+  }
+}
+
+/* Tablets horizontales */
+@media (max-width: 992px) {
+  .container-ventas {
+    max-width: 750px;
+  }
+  .filtros-container-ventas {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablets verticales */
 @media (max-width: 768px) {
-    .container,
-    .container-ventas,
-    .contenedor-pedidos {
-        padding: 15px;
-        margin: 0 auto;
-    }
-
-    h1, h2 {
-        font-size: 22px;
-        margin: 10px 0 20px 0;
-    }
-
-    /* Stats en columnas */
-    .stats-container,
-    .resumen-cards-ventas {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-
-    .stat-card,
-    .card {
-        padding: 18px;
-    }
-
-    .stat-card .numero,
-    .card-value {
-        font-size: 24px;
-    }
-
-    /* Pedido cards */
-    .pedido-card {
-        padding: 1rem;
-    }
-
-    .pedido-header {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
-    }
-
-    /* Filtros apilados */
-    .filtros-buttons {
-        justify-content: center;
-    }
-
-    .filtro-btn {
-        flex: 1;
-        min-width: 100px;
-        text-align: center;
-    }
-
-    /* Búsqueda */
-    .search-container,
-    .busqueda-ventas {
-        padding: 12px;
-    }
-
-    .search-input,
-    .search-input-ventas {
-        width: 100%;
-        font-size: 14px;
-        padding: 10px 12px;
-    }
-
-    /* Botón exportar centrado */
-    .btn-exportar,
-    .btn-export-ventas,
-    .export-container-ventas {
-        width: 100%;
-        max-width: 300px;
-        margin: 0 auto 15px auto;
-        display: flex;
-        justify-content: center;
-    }
-
-    /* Tabla scroll horizontal */
-    .table-container,
-    .table-container-ventas {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-        min-width: 650px;
-        font-size: 13px;
-    }
-
-    th, td {
-        padding: 10px 8px;
-        font-size: 13px;
-        white-space: nowrap;
-    }
-
-    /* Botones de estado más pequeños */
-    .btn-estado {
-        padding: 5px 10px;
-        font-size: 11px;
-        margin: 1px;
-    }
-
-    .estado-actual,
-    .pago-badge {
-        padding: 5px 10px;
-        font-size: 11px;
-    }
-
-    /* Productos en pedido */
-    .producto-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .producto-precio {
-        align-self: flex-end;
-    }
-
-    /* Modal */
-    .modal-content {
-        width: 95%;
-        max-width: 95%;
-        margin: 8% auto;
-    }
-
-    .modal-header {
-        padding: 18px 20px;
-    }
-
-    .modal-header h2 {
-        font-size: 20px;
-        margin: 0;
-    }
-
-    .modal-body {
-        padding: 20px;
-    }
-
-    .pedido-info {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        padding: 15px;
-    }
-
-    .productos-table th,
-    .productos-table td {
-        padding: 10px 12px;
-        font-size: 13px;
-    }
-
-    .total-amount {
-        font-size: 28px;
-    }
-
-    /* Paginación */
-    .pagination {
-        font-size: 13px;
-        gap: 6px;
-    }
-
-    .pagination a,
-    .pagination span {
-        padding: 6px 10px;
-    }
+  .container-ventas {
+    max-width: 650px;
+    padding: 15px;
+  }
+  h1 { font-size: 22px; }
+  .card-value { font-size: 26px; }
 }
 
-/* 📲 Móviles pequeños (max 480px) */
+/* Celulares grandes (412px, 430px, 390px) */
 @media (max-width: 480px) {
-    .container,
-    .container-ventas,
-    .contenedor-pedidos {
-        padding: 10px;
-    }
+  .container-ventas {
+    width: 100%;
+    padding: 15px;
+  }
 
-    h1, h2 {
-        font-size: 20px;
-        margin: 8px 0 15px 0;
-    }
+  .card { padding: 18px; }
+  .card-value { font-size: 22px; }
 
-    /* Stats en columna única */
-    .stats-container,
-    .resumen-cards-ventas {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
+  .btn-export-ventas {
+    width: 100%;
+    justify-content: center;
+  }
+}
 
-    .stat-card,
-    .card {
-        padding: 15px;
-    }
+/* Celulares pequeños (iPhone SE, 360px) */
+@media (max-width: 380px) {
+  .container-ventas { padding: 12px; }
 
-    .stat-card .numero,
-    .card-value {
-        font-size: 22px;
-    }
+  th, td { font-size: 12px; }
+}
 
-    /* Filtros */
-    .filtros-rapidos,
-    .filtros-container-ventas,
-    .busqueda-ventas {
-        padding: 10px;
-    }
-
-    .filtros-buttons {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .filtro-btn {
-        width: 100%;
-        text-align: center;
-    }
-
-    /* Búsqueda */
-    .search-input,
-    .search-input-ventas {
-        font-size: 13px;
-        padding: 9px 11px;
-    }
-
-    /* Botón exportar */
-    .btn-exportar,
-    .btn-export-ventas {
-        width: 100%;
-        max-width: 100%;
-        padding: 11px 16px;
-        font-size: 14px;
-        justify-content: center;
-    }
-
-    /* Tabla más pequeña */
-    table {
-        min-width: 550px;
-        font-size: 12px;
-    }
-
-    th, td {
-        padding: 8px 6px;
-        font-size: 12px;
-    }
-
-    th {
-        font-size: 11px;
-    }
-
-    /* Botones más compactos */
-    .btn-estado {
-        padding: 4px 8px;
-        font-size: 10px;
-    }
-
-    .estado-actual,
-    .pago-badge,
-    .cantidad-badge {
-        padding: 4px 8px;
-        font-size: 10px;
-    }
-
-    /* Modal */
-    .modal-content {
-        width: 96%;
-        margin: 10% auto;
-        max-height: 85vh;
-    }
-
-    .modal-header {
-        padding: 15px;
-    }
-
-    .modal-header h2 {
-        font-size: 18px;
-    }
-
-    .close {
-        width: 35px;
-        height: 35px;
-        font-size: 28px;
-    }
-
-    .modal-body {
-        padding: 15px;
-    }
-
-    .productos-table th,
-    .productos-table td {
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-
-    .total-pedido {
-        padding: 18px;
-    }
-
-    .total-amount {
-        font-size: 24px;
-    }
-
-    /* Alertas */
-    .alerta {
-        right: 10px;
-        left: 10px;
-        top: 10px;
-        padding: 12px 15px;
-        font-size: 13px;
-    }
-
-    .confirmar-box {
-        padding: 20px;
-        max-width: 90%;
-    }
-
-    /* Pedido card */
-    .pedido-card {
-        padding: 0.8rem;
-    }
-
-    .btn-volver {
-        width: 100%;
-        padding: 12px;
-        text-align: center;
-    }
-
-    /* Paginación */
-    .pagination {
-        font-size: 12px;
-        gap: 4px;
-    }
-
-    .pagination a,
-    .pagination span {
-        padding: 5px 8px;
-        font-size: 12px;
-    }
+/* Celulares muy pequeños (320px) */
+@media (max-width: 330px) {
+  .container-ventas { padding: 10px; }
+  .search-input-ventas { font-size: 13px; }
 }

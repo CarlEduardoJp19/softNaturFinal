@@ -1,9 +1,11 @@
 /* GST DEVOLUCIONES */
 .contenedor-admin-devoluciones {
   padding: 2rem;
-  max-width: 1700px;
+  max-width: 1650px;
   margin: 0 auto;
-  margin-left: 40px;
+  margin-left: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 h2 {
@@ -11,12 +13,13 @@ h2 {
   font-size: 2rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  margin-left: 570px;
+  margin-left: 0;
   color: black;
+  text-align: center;
 }
 
-/* */
 /* Filtros wrapper */
 .filtros-wrapper {
   display: flex;
@@ -55,7 +58,9 @@ h2 {
 }
 
 .input-buscar {
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
+  min-width: 250px;
 }
 
 .btn-exportar-historial {
@@ -129,6 +134,7 @@ h2 {
   display: flex;
   gap: 20px;
   margin-bottom: 25px;
+  flex-wrap: wrap;
 }
 
 .stat-card {
@@ -137,15 +143,15 @@ h2 {
   gap: 12px;
   padding: 15px 25px;
   border-radius: 10px;
-
-  width: 800px;
+  flex: 1;
+  min-width: 280px;
+  max-width: 500px;
 }
 
 .stat-card.aprobadas {
   border: 3px solid #27ae5fbd;
   background: #27ae5f33;
   color: #1a703e;
-
 }
 
 .stat-card.rechazadas {
@@ -201,18 +207,20 @@ h2 {
   font-size: 12px;
 }
 
-/* */
-
+/* Tabla */
 .tabla-devoluciones {
   background-color: #fff;
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 1000px;
 }
 
 thead {
@@ -265,10 +273,8 @@ tbody td {
 
 .botones-accion {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-wrap: wrap; 
-  padding: 10px 0;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .btn-ver,
@@ -322,6 +328,7 @@ tbody td {
   color: #ddd;
 }
 
+/* Modal */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -401,15 +408,12 @@ tbody td {
   color: #2c3e50;
 }
 
-/* 👇 AJUSTES PARA HACER LAS IMÁGENES MÁS PEQUEÑAS */
 .galeria-fotos {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 180px));
-  /* 👈 Reducido de 200px */
   gap: 1rem;
   margin-top: 1rem;
   justify-content: center;
-  /* 👈 Centrar las imágenes */
 }
 
 .foto-item-modal {
@@ -421,9 +425,7 @@ tbody td {
   cursor: pointer;
   transition: transform 0.2s;
   max-width: 180px;
-  /* 👈 Tamaño máximo */
   max-height: 180px;
-  /* 👈 Tamaño máximo */
 }
 
 .foto-item-modal:hover {
@@ -496,29 +498,96 @@ tbody td {
   margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 2px solid #eee;
+  flex-wrap: wrap;
 }
 
+/* ========================================= */
+/* MEDIA QUERIES RESPONSIVE */
+/* ========================================= */
+
+/* Tablets grandes y pantallas medianas (1024px y menos) */
+@media (max-width: 1024px) {
+  .contenedor-admin-devoluciones {
+    margin-left: 210px;
+    padding: 1.5rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  h2 {
+    margin-left: 0;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
 
 
+  /* Asegurar scroll en tabla */
+  .tabla-devoluciones {
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+/* Tablets (768px y menos) */
 @media (max-width: 768px) {
   .contenedor-admin-devoluciones {
     margin-left: 0;
+    padding: 1rem;
+    width: 100%;
+    overflow-x: hidden;
   }
 
+  h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    justify-content: center;
+    margin-left: 0;
+  }
+
+
+  /* Tabla responsive con scroll horizontal */
   .tabla-devoluciones {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .filtros {
-    flex-direction: column;
-    align-items: stretch;
+  table {
+    min-width: 800px;
+    font-size: 0.85rem;
   }
 
-  .btn-filtrar {
-    align-self: stretch;
+  thead th {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
 
-  /* 👇 Imágenes aún más pequeñas en móvil */
+  tbody td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  /* Botones de acción más pequeños */
+  .btn-ver,
+  .btn-aprobar{
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  .btn-rechazar {
+    width: 500px;
+  }
+
+  /* Modal más pequeño */
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1.3rem;
+  }
+
+  /* Galería de fotos más pequeña */
   .galeria-fotos {
     grid-template-columns: repeat(auto-fit, minmax(120px, 150px));
   }
@@ -526,6 +595,255 @@ tbody td {
   .foto-item-modal {
     max-width: 150px;
     max-height: 150px;
+  }
+
+  /* Botón cerrar imagen */
+  .btn-cerrar-imagen {
+    right: 20px;
+    font-size: 2.5rem;
+  }
+}
+
+/* Móviles (480px y menos) */
+@media (max-width: 480px) {
+  .contenedor-admin-devoluciones {
+    padding: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    text-align: left;
+    margin-left: 0;
+  }
+
+  .label-devoluciones {
+    font-size: 14px;
+  }
+
+
+  /* Convertir tabla en cards */
+  .tabla-devoluciones {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  table {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody {
+    display: block;
+  }
+
+  tbody tr {
+    display: block;
+    background: white;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-bottom: none;
+    position: relative;
+  }
+
+  tbody tr::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #E5BE01;
+    border-radius: 8px 8px 0 0;
+  }
+
+  tbody tr.fila-aprobada::before {
+    background: #27ae60;
+  }
+
+  tbody tr.fila-rechazada::before {
+    background: #e74c3c;
+  }
+
+  tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: right;
+  }
+
+  tbody td:last-child {
+    border-bottom: none;
+    padding-top: 1rem;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    text-align: left;
+    font-size: 0.85rem;
+  }
+
+  /* Para el td de acciones, que no tenga before */
+  tbody td:last-child::before {
+    display: none;
+  }
+
+  tbody td strong {
+    font-size: 0.9rem;
+  }
+
+  tbody td small {
+    font-size: 0.75rem;
+    display: block;
+  }
+
+  .botones-accion {
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .btn-ver,
+  .btn-aprobar,
+  .btn-rechazar {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    flex: 1;
+    white-space: nowrap;
+  }
+
+  .btn-ver i,
+  .btn-aprobar i,
+  .btn-rechazar i {
+    display: none;
+  }
+
+  .estado-badge {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+  }
+
+  /* Modal en móvil */
+  .modal-content {
+    padding: 1rem;
+    width: 98%;
+    max-height: 85vh;
+  }
+
+  .modal-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+    flex: 1;
+  }
+
+  .modal-header h3 i {
+    font-size: 0.9rem;
+  }
+
+  .btn-cerrar-modal {
+    position: static;
+    font-size: 1.5rem;
+  }
+
+  .detalle-seccion h4 {
+    font-size: 1rem;
+  }
+
+  .detalle-info {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .detalle-info p {
+    margin: 0.4rem 0;
+  }
+
+  /* Galería muy compacta */
+  .galeria-fotos {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .foto-item-modal {
+    max-width: 100%;
+    max-height: 150px;
+  }
+
+  /* Acciones modal */
+  .acciones-modal {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .acciones-modal button {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .btn-cerrar-imagen {
+    right: 10px;
+    top: 10px;
+    font-size: 2.5rem;
+  }
+
+  /* Tabla historial si existe */
+  .tabla-historial {
+    display: block;
+  }
+
+  .tabla-historial thead {
+    display: none;
+  }
+
+  .tabla-historial tbody {
+    display: block;
+  }
+
+  .tabla-historial tr {
+    display: block;
+    background: white;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .tabla-historial td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .tabla-historial td:last-child {
+    border-bottom: none;
+  }
+
+  .tabla-historial td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+    margin-right: 1rem;
   }
 }
 
@@ -562,7 +880,7 @@ body {
   transition: background-color 0.3s;
   border: none;
   outline: none;
-  margin-right: 800px;
+  margin-right: 0;
   font-size: 16px;
 }
 
@@ -593,10 +911,11 @@ body {
 
 .acciones-superiores {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;   /* Mantiene ambos a la derecha */
   align-items: center;
-  gap: 15px;
-  margin-left: 50px;
+  gap: 12px;
+  flex-wrap: wrap;             /* <--- LO QUE TE FALTABA */
+  width: 100%;
 }
 
 h1 {
@@ -605,13 +924,32 @@ h1 {
   color: #292929;
 }
 
+.tabla-usuarios-wrapper {
+    width: 100%;
+    overflow-x: auto;     /* ← Aquí debe ir el scroll */
+    overflow-y: visible;
+}
+
 .tabla-usuarios {
   width: 100%;
+  min-width: 1000px;  /* ANTES: 750px → aumenta para que ID no se corte */
+  table-layout: auto;
   border-collapse: collapse;
   border-radius: 10px;
-  overflow: hidden;
   background: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tabla-usuarios table {
+    width: 100%;
+    table-layout: auto;   /* NECESARIO para dividir el texto */
+}
+
+.tabla-usuarios th:first-child,
+.tabla-usuarios td:first-child {
+    width: 60px;       /* ancho fijo para la columna ID */
+    min-width: 60px;
+    text-align: center;
 }
 
 .tabla-usuarios thead {
@@ -635,6 +973,12 @@ h1 {
   border-bottom: 1px solid #eee;
   vertical-align: middle;
   font-size: 16px;
+}
+
+.tabla-usuarios th,
+.tabla-usuarios td {
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .tabla-usuarios tbody tr:nth-child(even) {
@@ -782,7 +1126,11 @@ tbody tr:hover {
 }
 
 .search-container {
+  display: flex;
+  margin-top: 15px;
+  flex-direction: column;
   background: white;
+  align-items: center;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -791,7 +1139,8 @@ tbody tr:hover {
 }
 
 .search-input {
-  width: 1228px;
+  width: 100%;
+  max-width: 100%;
   padding: 12px 15px;
   border: 1px solid #ddd;
   border-radius: 25px;
@@ -820,58 +1169,46 @@ tbody tr:hover {
   margin: 20px 0;
 }
 
-
-
-@media (min-width: 1095px) {
-  .contenedor {
-    max-width: 1850px;
-    margin-left: 50px;
-  }
-
-  .agregar {
-    display: inline-block;
-    width: 40%;
-    margin: 8px 0;
-    margin-left: 120px;
-  }
-
-  .btn-export {
-    display: inline-block;
-    width: 40%;
-    margin: 8px 0;
-  }
-
-  .search-input {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .acciones-superiores {
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-
+.tabla-usuarios {
+    min-width: 750px;
+    table-layout: fixed;
 }
-
-/* ============================================
-   RESPONSIVE SIMPLE - SOLO LO NECESARIO
-   ============================================ */
 
 /* ============================================
    RESPONSIVE SIMPLE - 3 BREAKPOINTS
    1700px → 1120px → 860px → 576px
    ============================================ */
 
+@media (max-width: 1300px) {
+    .search-input {
+        width: 70%;   /* más pequeño */
+    }
+    .tabla-usuarios th,
+    .tabla-usuarios td {
+        font-size: 15px;
+        padding: 10px 12px;
+    }
+}
 /* 1120px */
 @media (max-width: 1120px) {
+
+  .contenedor-admin-devoluciones {
+    width: 95%;
+      margin-left: 30px;
+      padding: 15px;
+    }
 
     .contenedor {
         max-width: 100%;
         margin: 0 auto;
         padding: 15px;
         box-sizing: border-box;
+    }
+
+    .tabla-usuarios th,
+    .tabla-usuarios td {
+        font-size: 14px;
+        padding: 8px 10px;
     }
 
     h1, h2 {
@@ -885,7 +1222,7 @@ tbody tr:hover {
     }
 
     .search-input {
-        width: 100%;
+        width: 55%;
     }
 
     /* contenedor con scroll horizontal */
@@ -895,17 +1232,61 @@ tbody tr:hover {
         width: 100%;
         overflow-x: auto;
     }
+}
+@media (max-width: 994px) {
 
-    table {
-        width: 100%;
-        min-width: 650px; /* importante: no muy grande */
+  #txt-gst{
+    margin-left: -120px;
+  }
+    .contenedor-admin-devoluciones {
+      width: 90%;
+      margin-left: 75px;
+      padding: 15px;
+    }
+
+    .tabla-usuarios-wrapper {
+        overflow-x: auto;  /* permite scroll */
+    }
+
+    .tabla-usuarios {
+        min-width: 950px !important; /* ancho mínimo de la tabla */
+        table-layout: auto;
+    }
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;    /* centra horizontal */
+      justify-content: center;
+      width: 100%;            /* ocupa todo el ancho disponible */
+      box-sizing: border-box;
+      margin-left: 0;         /* quitar márgenes fijos */
+    }
+    h1, h2 {
+      margin-left: 130px;
+      font-size: 3rem;
+    }
+
+    .btn-exportar{
+      width: 40%;
+    }
+
+    .search-input{
+      margin-top: 10px;
+    }
+    .tabla-usuarios-wrapper{
+      width: auto;
+      margin-left: 50px;
     }
 }
 
 /* 📱 Tablets pequeñas (max 860px) */
 @media (max-width: 860px) {
+  #txt-gst{
+    margin-left: -90px;
+  }
     .contenedor,
     .contenedor-admin-devoluciones {
+      margin-left: 80px;
         padding: 15px;
     }
 
@@ -915,9 +1296,9 @@ tbody tr:hover {
     }
 
     .agregar,
-    .btn-export,
+    .btn-exportar,
     .btn-exportar-historial {
-        width: 100%;
+        width: 70%;
         justify-content: center;
     }
 
@@ -929,6 +1310,12 @@ tbody tr:hover {
     .filtros-devoluciones {
         flex-direction: column;
         width: 100%;
+    }
+
+    .btn-exportar {
+        padding: 8px 15px;   /* más pequeño */
+        font-size: 14px;     /* texto más pequeño */
+        width: 100%;         /* ocupa todo el ancho, recomendación responsive */
     }
 
     .filtro-grupo {
@@ -953,40 +1340,160 @@ tbody tr:hover {
     .stat-card {
         width: 100%;
     }
+    .tabla-usuarios th,
+    .tabla-usuarios td {
+      font-size: 13px;
+      padding: 6px 8px;
+    }
+    .search-container {
+      margin-left: 130px;
+      display: flex;
+      flex-direction: column;   /* que los elementos queden apilados */
+      align-items: center;      /* centra horizontalmente */
+      justify-content: center;  /* opcional, para centrar vertical si hace falta */
+      width: 80%;              /* que ocupe todo el contenedor */
+      box-sizing: border-box;   /* para que padding no rompa el ancho */
+    }
+    h1, h2 {
+      margin-left: 130px;
+      font-size: 3rem;
+    }
+    .btn-exportar{
+      width: 62%;
+    }
 
-    table {
-        min-width: 700px;
+    .search-input{
+      margin-top: 10px;
+    }
+    .tabla-usuarios-wrapper{
+      width: auto;
+      margin-left: 90px;
+    }
+
+    .tabla-devoluciones{
+      width: 100%;
+    }
+
+    .no-devoluciones{
+      width: 90%;
+      margin-left: 110px;
     }
 }
 
-/* 📲 Móviles (max 576px) */
-@media (max-width: 576px) {
+@media (max-width: 769px) {
+  #txt-gst{
+    font-size: 35px;
+  }
+    .tabla-usuarios th,
+    .tabla-usuarios td {
+        font-size: 11px;
+        padding: 6px 4px;
+    }
+    .acciones-superiores {
+        margin-left: 0;
+        justify-content: center;
+    }
+
+    .search-container {
+      margin-left: 112px;
+      display: flex;
+      flex-direction: column;   /* que los elementos queden apilados */
+      align-items: center;      /* centra horizontalmente */
+      justify-content: center;  /* opcional, para centrar vertical si hace falta */
+      width: 80%;              /* que ocupe todo el contenedor */
+      box-sizing: border-box;   /* para que padding no rompa el ancho */
+    }
+
+    h1, h2 {
+      margin-left: 150px;
+      font-size: 3rem;
+    }
+    .tabla-usuarios-wrapper{
+      width: auto;
+      margin-left: 90px;
+    }
+
+    .tabla-devoluciones{
+      width: 90%;
+      margin-left: 40px;
+    }
+
+    .no-devoluciones{
+      width: 100%;
+    }
+}
+
+@media (max-width: 697px) {
+  #txt-gst{
+    font-size: 23px;
+    margin-left: -60px;
+  }
     .contenedor,
     .contenedor-admin-devoluciones {
         padding: 10px;
     }
 
     h1, h2 {
-        font-size: 1.5rem;
+      margin-left: 160px;
+      font-size: 1.5rem;
     }
 
-    table {
-        min-width: 600px;
-        font-size: 13px;
+    .search-container {
+      margin-left: 40px;
+        display: flex;
+        flex-direction: column;   /* que los elementos queden apilados */
+        align-items: center;      /* centra horizontalmente */
+        justify-content: center;  /* opcional, para centrar vertical si hace falta */
+        width: 95%;              /* que ocupe todo el contenedor */
+        box-sizing: border-box;   /* para que padding no rompa el ancho */
     }
 
-    th, td {
-        padding: 8px 6px;
-        font-size: 13px;
+    .search-input {
+        width: 90%;               /* se ajusta al contenedor y centrado */
+        max-width: 350px;         /* opcional, que no se estire demasiado */
     }
-
-    .agregar,
-    .btn-export {
-        font-size: 14px;
-        padding: 10px;
+    
+    .tabla-usuarios th,
+    .tabla-usuarios td {
+      font-size: 9px;
+      padding: 4px 3px;
+      white-space: normal;  
+      word-wrap: break-word;
     }
 
     .modal {
         width: 95%;
     }
+
+    .tabla-usuarios-wrapper {
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    .tabla-usuarios {
+        width: auto; 
+        min-width: 950px !important;  
+        table-layout: fixed;           
+    }
+    
+    /* Ajuste de botones para móviles */
+    .agregar,
+    .btn-exportar {
+        width: auto;          /* que se ajuste al contenido */
+        font-size: 12px;      /* texto más pequeño */
+        padding: 6px 12px;    /* padding más compacto */
+        margin-bottom: 5px;   /* espacio entre botones */
+        justify-content: center;
+        text-align: center;
+    }
+
+    .acciones-superiores {
+        flex-direction: column;  /* que queden centrados uno sobre otro */
+        gap: 5px;                /* espacio entre botones */
+        align-items: center;
+        margin-left: 0;
+        justify-content: center;
+    }
 }
+
+

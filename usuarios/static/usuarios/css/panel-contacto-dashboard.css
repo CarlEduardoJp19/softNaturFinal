@@ -12,6 +12,58 @@ body {
   padding: 20px;
 }
 
+.filtro-tiempo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.label-filtro {
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.select-filtro {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.select-filtro:focus {
+    border-color: #7aa8ff;
+    box-shadow: 0 0 6px rgba(122, 168, 255, 0.4);
+}
+
+.btn-filtro {
+    background: #E5BE01;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-filtro:hover {
+    background: #026905;
+    transform: translateY(-2px);
+}
+
+.btn-filtro:active {
+    transform: scale(0.97);
+}
+
+
 /* ====== Sidebar ====== */
 .sidebar {
   width: 200px;
@@ -737,3 +789,182 @@ h1 {
   padding: 5px 0;
   font-size: 0.9rem;
 }
+
+/* ========================= */
+/*       MEDIA QUERIES       */
+/* ========================= */
+
+/* Muy grandes (+1600px) */
+@media (min-width: 1600px) {
+  .contact-container { max-width: 1100px; }
+}
+
+/* 1280px – 1599px */
+@media (max-width: 1599px) and (min-width: 1280px) {
+  .contact-container { max-width: 1000px; }
+}
+
+/* Laptops – 1024px a 1279px */
+@media (max-width: 1279px) and (min-width: 1024px) {
+  .contact-container {
+    max-width: 850px;
+    gap: 30px;
+  }
+  .contact-form {
+    width: 70%;
+    margin-left: -70px;
+    padding: 28px;
+  }
+
+  .contact-info{
+    margin-left: 20px;
+  }
+}
+
+/* TU RESOLUCIÓN – 889px a 1023px */
+@media (max-width: 1023px) and (min-width: 889px) {
+  .contact-container {
+    max-width: 950px;
+    gap: 25px;
+  }
+  .contact-form,
+  .contact-info {
+    width: 60%;
+    flex: 0 0 48%;
+    padding: 25px;
+  }
+  .contact-form h2,
+  .contact-info h2 {
+    font-size: 22px; }
+  .navbar,
+  .navbar .nav-items {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+    margin-right: 0;
+}
+}
+
+@media (max-width: 888px) and (min-width: 768px) {
+  .contact-container {
+    max-width: 100%;        /* ocupa todo el ancho disponible */
+    padding: 0 15px;        /* margen interno */
+    flex-direction: column; /* apilar formulario e info */
+    gap: 20px;              /* separación entre bloques */
+    box-sizing: border-box; /* evita overflow por padding */
+    margin-left: 0;         /* eliminar desplazamiento */
+    margin-right: 0;        /* asegurar centrado */
+  }
+
+  .contact-form,
+  .contact-info {
+    width: 100%;           /* ocupar todo el contenedor */
+    padding: 20px;         /* mantener espacio interno */
+    box-sizing: border-box;
+  }
+
+  .contact-form h2,
+  .contact-info h2 {
+    font-size: 20px;       /* tamaño de título ajustado */
+  }
+
+  /* Navbar y menú */
+  .navbar,
+  .navbar .nav-items {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .btn-enviar {
+    width: 100%;           /* botón ancho completo */
+    max-width: 300px;      /* opcional para no estirarse demasiado */
+  }
+}
+
+/* Celulares grandes – 600px a 767px */
+@media (max-width: 767px) and (min-width: 600px) {
+  .contact-container {
+    max-width: 100%;       /* ocupa todo el ancho disponible */
+    padding: 0 15px;       /* margen interno */
+    flex-direction: column; /* apilar formulario e info */
+    gap: 20px;             /* separación entre bloques */
+    box-sizing: border-box; /* evita overflow por padding */
+    margin-left: 0;        /* eliminar desplazamiento */
+  }
+
+  .contact-form,
+  .contact-info {
+    width: 100%;           /* ocupar todo el contenedor */
+    padding: 20px;         /* mantener espacio interno */
+    box-sizing: border-box;
+  }
+
+  .row{
+    width: 90%;
+  }
+
+
+  .contact-form h2,
+  .contact-info h2 {
+    font-size: 20px;       /* tamaño de título ajustado */
+  }
+
+  .sections{
+    width: 100%;
+    margin-left: -10px;
+  }
+
+  .section{
+    width: 100%;
+  }
+
+  .btn-enviar {
+    width: 100%;           /* botón ancho completo */
+    max-width: 300px;      /* opcional para no estirarse demasiado */
+  }
+}
+
+/* Celulares medianos – 430px a 599px */
+@media (max-width: 599px) {
+  .contact-container {
+    max-width: 620px;
+    margin-left: -20px;
+    flex-direction: column;
+    padding: 0 12px;
+  }
+  .contact-form,
+  .contact-info { padding: 20px; }
+  .contact-form h2,
+  .contact-info h2 { font-size: 20px; }
+}
+
+.sections{
+    width: 70%;
+    margin-left: -30px;
+  }
+
+  .section{
+    margin-left: 10px;
+    width: 90%;
+  }
+  .row{
+    width: 90%;
+    margin-left: -3px;
+  }
+
+  #asunto {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    #mensaje {
+      margin-top: 5px;
+        width: 85%;
+    }
+

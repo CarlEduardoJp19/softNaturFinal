@@ -889,6 +889,18 @@ h2 {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 30px;
     }
+
+    .btn-edit,
+    .btn-more,
+    .btn-more2,
+    .btn-lote {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 4px;
+        padding: 10px;
+        font-size: 13px;
+    }
 }
 
 /* 🖥️ Pantallas grandes (1200px - 1399px) */
@@ -906,6 +918,18 @@ h2 {
     .product-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 25px;
+    }
+
+    .btn-edit,
+    .btn-more,
+    .btn-more2,
+    .btn-lote {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 4px;
+        padding: 10px;
+        font-size: 13px;
     }
 }
 
@@ -941,6 +965,18 @@ h2 {
     .card-body h3 {
         font-size: 1.2rem;
     }
+
+    .btn-edit,
+    .btn-more,
+    .btn-more2,
+    .btn-lote {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 4px;
+        padding: 10px;
+        font-size: 13px;
+    }
 }
 
 /* 📱 Tablets (768px - 991px) */
@@ -955,6 +991,7 @@ h2 {
     }
 
     .search-container {
+        margin-left: 65px;
         padding: 20px;
     }
 
@@ -978,6 +1015,10 @@ h2 {
     .search-input {
         padding: 12px;
         font-size: 15px;
+    }
+
+    .product-card{
+        margin-left: 60px;
     }
 
     .product-grid {
@@ -1034,6 +1075,18 @@ h2 {
         padding: 8px 16px;
         font-size: 14px;
     }
+
+    .btn-edit,
+    .btn-more,
+    .btn-more2,
+    .btn-lote {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 4px;
+        padding: 10px;
+        font-size: 13px;
+    }
 }
 
 /* 📱 Tablets pequeñas y móviles grandes (576px - 767px) */
@@ -1043,11 +1096,13 @@ h2 {
     }
 
     h1 {
+        margin-left: 60px;
         font-size: 1.75rem;
         margin-bottom: 18px;
     }
 
     .search-container {
+        margin-left: 110px;
         padding: 15px;
     }
 
@@ -1059,7 +1114,10 @@ h2 {
     .btn-agregar,
     .btn-categorias,
     .btn-exportar {
-        width: 100%;
+        display: flex;
+        margin-left: 70px;
+        align-items: center;
+        width: 70%;
         min-width: unset;
         padding: 12px 20px;
         font-size: 15px;
@@ -1069,6 +1127,10 @@ h2 {
     .search-input {
         padding: 12px;
         font-size: 14px;
+    }
+
+    .product-card{
+        margin-left: 100px;
     }
 
     .product-grid {
@@ -1106,6 +1168,7 @@ h2 {
     .btn-more2,
     .btn-lote {
         width: 100%;
+        margin: 4px;
         padding: 10px;
         font-size: 13px;
     }
@@ -1225,11 +1288,13 @@ h2 {
     }
 
     h1 {
+        margin-left: 110px;
         font-size: 1.5rem;
         margin-bottom: 15px;
     }
 
     .search-container {
+        margin-left: 190px;
         padding: 12px;
     }
 
@@ -1240,6 +1305,7 @@ h2 {
     .btn-agregar,
     .btn-categorias,
     .btn-exportar {
+        margin-left: 45px;
         padding: 10px 16px;
         font-size: 14px;
     }

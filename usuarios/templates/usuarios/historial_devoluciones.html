@@ -2,26 +2,28 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'usuarios/css/devoluciones-usuarios.css' %}" />
+<link rel="stylesheet" href="{% static 'usuarios/css/historial-devoluciones.css' %}" />
 {% endblock %}
 
 {% block page_id %}historial-devoluciones{% endblock %}
 
 {% block content %}
-<div class="contenedor-admin-devoluciones">
-    <h2>Historial de Devoluciones</h2>
+<div class="contenedor-historial">
+    <h2 class="titulo-historial">
+        Historial de Devoluciones
+    </h2>
 
     <!-- Filtros -->
-    <div class="filtros-wrapper">
-        <form method="GET" class="filtros-devoluciones">
-            <div class="filtro-grupo">
-                <label class="label-devoluciones" >Buscar:</label>
+    <div class="seccion-filtros">
+        <form method="GET" class="formulario-filtros">
+            <div class="campo-filtro">
+                <label class="etiqueta-filtro">Buscar:</label>
                 <input type="text" name="buscar" placeholder="Usuario, producto o lote..." 
-                       value="{{ busqueda|default:'' }}" class="input-buscar">
+                       value="{{ busqueda|default:'' }}" class="campo-busqueda">
             </div>
 
-            <div class="filtro-grupo">
-                <label class="label-devoluciones" >Estado:</label>
+            <div class="campo-filtro-estado">
+                <label class="etiqueta-filtro">Estado:</label>
                 <select name="estado">
                     <option value="">Todos</option>
                     <option value="Aprobada" {% if estado_filtro == 'Aprobada' %}selected{% endif %}>Aprobada</option>
@@ -29,8 +31,8 @@
                 </select>
             </div>
 
-            <div class="filtro-grupo">
-                <label class="label-devoluciones" >Tiempo:</label>
+            <div class="campo-filtro-estado">
+                <label class="etiqueta-filtro">Tiempo:</label>
                 <select name="tiempo">
                     <option value="">Todos</option>
                     <option value="semana" {% if filtro_tiempo == 'semana' %}selected{% endif %}>Esta semana</option>
@@ -38,86 +40,106 @@
                     <option value="año" {% if filtro_tiempo == 'año' %}selected{% endif %}>Este año</option>
                 </select>
             </div>
-
-            <button type="submit" class="btn-filtrar-devoluciones">
+        </form>
+        <div class="botones">
+             <button type="submit" class="boton-filtrar">
                 <i class="fa fa-filter"></i> Filtrar
             </button>
-            <a href="{% url 'usuarios:historial_devoluciones' %}" class="btn-limpiar-filtros">
+            <a href="{% url 'usuarios:historial_devoluciones' %}" class="boton-limpiar">
                 <i class="fa fa-times"></i> Limpiar
             </a>
-        </form>
-
-        <a href="{% url 'usuarios:exportar_devoluciones_excel' %}?estado={{ estado_filtro|default:'' }}&tiempo={{ filtro_tiempo|default:'' }}&buscar={{ busqueda|default:'' }}" class="btn-exportar-historial">
-            <i class="fa fa-file-excel"></i> Exportar a Excel
-        </a>
+            <a href="{% url 'usuarios:exportar_devoluciones_excel' %}?estado={{ estado_filtro|default:'' }}&tiempo={{ filtro_tiempo|default:'' }}&buscar={{ busqueda|default:'' }}" class="boton-exportar">
+                <i class="fa fa-file-excel"></i> Exportar a Excel
+            </a>
+        </div>
     </div>
 
     <!-- Estadísticas -->
-    <div class="stats-devoluciones">
-        <div class="stat-card aprobadas">
-            <i class="fa fa-check-circle"></i>
-            <span class="stat-numero">{{ total_aprobadas }}</span>
-            <span class="stat-label">Aprobadas</span>
+    <div class="estadisticas-historial">
+        <div class="tarjeta-estadistica tarjeta-aprobada">
+            <i class="fa fa-check-circle icono-estadistica"></i>
+            <div class="contenido-estadistica">
+                <span class="numero-estadistica">{{ total_aprobadas }}</span>
+                <span class="texto-estadistica">Aprobadas</span>
+            </div>
         </div>
-        <div class="stat-card rechazadas">
-            <i class="fa fa-times-circle"></i>
-            <span class="stat-numero">{{ total_rechazadas }}</span>
-            <span class="stat-label">Rechazadas</span>
+        <div class="tarjeta-estadistica tarjeta-rechazada">
+            <i class="fa fa-times-circle icono-estadistica"></i>
+            <div class="contenido-estadistica">
+                <span class="numero-estadistica">{{ total_rechazadas }}</span>
+                <span class="texto-estadistica">Rechazadas</span>
+            </div>
         </div>
     </div>
 
     {% if devoluciones %}
-    <table class="tabla-historial">
-        <thead>
-            <tr>
-                <th>#ID</th>
-                <th>Cliente</th>
-                <th>Producto</th>
-                <th>Lote</th>
-                <th>Estado</th>
-                <th>Fecha Solicitud</th>
-                <th>Admin</th>
-                <th>Comentario</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for devolucion in devoluciones %}
-            <tr class="{% if devolucion.estado == 'Aprobada' %}fila-aprobada{% else %}fila-rechazada{% endif %}">
-                <td>#{{ devolucion.id }}</td>
-                <td>
-                    <strong>{{ devolucion.usuario.nombre }}</strong><br>
-                    <small>{{ devolucion.usuario.email }}</small>
-                </td>
-                <td>{{ devolucion.producto.nombProduc }}</td>
-                <td>
-                    {% if devolucion.lote %}
-                        {{ devolucion.lote.codigo_lote }}
-                    {% else %}
-                        <span class="sin-lote">SIN LOTE</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <span class="badge-estado {% if devolucion.estado == 'Aprobada' %}badge-aprobada{% else %}badge-rechazada{% endif %}">
-                        {{ devolucion.estado }}
-                    </span>
-                </td>
-                <td>{{ devolucion.fecha_solicitud|date:"d/m/Y H:i" }}</td>
-                {% with ultimo_historial=devolucion.historial.first %}
-                    <td>{{ ultimo_historial.usuario_admin.nombre|default:"N/A" }}</td>
-                    <td>{{ devolucion.motivo|default:"Sin motivo especificado" }}</td>
-                {% endwith %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="contenedor-tabla-historial">
+        <table class="tabla-historial">
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Cliente</th>
+                    <th>Producto</th>
+                    <th>Lote</th>
+                    <th>Estado</th>
+                    <th>Fecha Solicitud</th>
+                    <th>Admin</th>
+                    <th>Comentario</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for devolucion in devoluciones %}
+                <tr class="{% if devolucion.estado == 'Aprobada' %}fila-aprobada-historial{% else %}fila-rechazada-historial{% endif %}">
+                    <td data-label="#ID">#{{ devolucion.id }}</td>
+                    <td data-label="Cliente" class="info-cliente">
+                        <strong>{{ devolucion.usuario.nombre }}</strong>
+                        <small>{{ devolucion.usuario.email }}</small>
+                    </td>
+                    <td data-label="Producto">{{ devolucion.producto.nombProduc }}</td>
+                    <td data-label="Lote">
+                        {% if devolucion.lote %}
+                            {{ devolucion.lote.codigo_lote }}
+                        {% else %}
+                            <span class="texto-sin-lote">SIN LOTE</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Estado">
+                        <span class="etiqueta-estado {% if devolucion.estado == 'Aprobada' %}etiqueta-aprobada{% else %}etiqueta-rechazada{% endif %}">
+                            {{ devolucion.estado }}
+                        </span>
+                    </td>
+                    <td data-label="Fecha">{{ devolucion.fecha_solicitud|date:"d/m/Y H:i" }}</td>
+                    {% with ultimo_historial=devolucion.historial.first %}
+                        <td data-label="Admin">{{ ultimo_historial.usuario_admin.nombre|default:"N/A" }}</td>
+                        <td data-label="Comentario">{{ devolucion.motivo|default:"Sin motivo especificado" }}</td>
+                    {% endwith %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">&laquo; Primera</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Anterior</a>
+        {% endif %}
+        
+        <span class="current">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Siguiente</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Última &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    </div>
     {% else %}
-    <div class="no-devoluciones">
+    <div class="mensaje-sin-historial">
         <i class="fa fa-inbox"></i>
         <p>No hay historial de devoluciones</p>
     </div>
     {% endif %}
 </div>
-{% endblock %}
-
-{% block scripts %}
 {% endblock %}

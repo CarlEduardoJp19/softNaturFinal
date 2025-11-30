@@ -16,59 +16,61 @@
   <div class="search-container">
     <div class="acciones-superiores">
       <button class="agregar" onclick="abrirModalAgregar()">Agregar Usuario</button>
-      <a class="btn-export" id="btnExportar" href="{% url 'usuarios:exportar_usuarios_excel' %}">Exportar Excel</a>
+      <a class="btn-exportar" id="btnExportar" href="{% url 'usuarios:exportar_usuarios_excel' %}">Exportar Excel</a>
 
     </div>
     <input type="text" class="search-input" id="searchInput" placeholder="Buscar usuario...">
     <p id="searchStatsUsuarios" class="search-stats"></p>
   </div>
 
-  <table class="tabla-usuarios">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Correo</th>
-        <th>Teléfono</th>
-        <th>Rol</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="usuariosTable">
-      {% for usuario in usuarios %}
-      <tr class="{% if not usuario.is_active %}fila-inactiva{% endif %}" data-id="{{ usuario.id }}"
-        data-search-text="{{ usuario.nombre|lower }} {{ usuario.email|lower }} {{ usuario.phone_number }} {{ usuario.rol|lower }}">
-        <td>{{ usuario.id }}</td>
-        <td>{{ usuario.nombre }}</td>
-        <td>{{ usuario.email }}</td>
-        <td>{{ usuario.phone_number }}</td>
-        <td>{{ usuario.rol }}</td>
-        <td class="acciones">
-          {% if usuario.is_active %}
-          <button class="editar" data-id="{{ usuario.id }}" data-nombre="{{ usuario.nombre }}"
-            data-email="{{ usuario.email }}" data-telefono="{{ usuario.phone_number }}" data-rol="{{ usuario.rol }}">
-            <i class="fa-solid fa-pen-to-square"></i>
-          </button>
-          <a href="{% url 'usuarios:cambiar_estado_usuario' usuario.id %}">
-            <button class="inactivar"><i class="fa-solid fa-user-slash"></i></button>
-          </a>
-          {% else %}
-          <button class="editar" disabled>
-            <i class="fa-solid fa-pen-to-square"></i>
-          </button>
-          <a href="{% url 'usuarios:cambiar_estado_usuario' usuario.id %}">
-            <button class="activar"><i class="fa-solid fa-user-check"></i></button>
-          </a>
-          {% endif %}
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="6" style="text-align: center; padding: 20px">No hay usuarios registrados.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="tabla-usuarios-wrapper">
+    <table class="tabla-usuarios">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="usuariosTable">
+        {% for usuario in usuarios %}
+        <tr class="{% if not usuario.is_active %}fila-inactiva{% endif %}" data-id="{{ usuario.id }}"
+          data-search-text="{{ usuario.nombre|lower }} {{ usuario.email|lower }} {{ usuario.phone_number }} {{ usuario.rol|lower }}">
+          <td>{{ usuario.id }}</td>
+          <td>{{ usuario.nombre }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.phone_number }}</td>
+          <td>{{ usuario.rol }}</td>
+          <td class="acciones">
+            {% if usuario.is_active %}
+            <button class="editar" data-id="{{ usuario.id }}" data-nombre="{{ usuario.nombre }}"
+              data-email="{{ usuario.email }}" data-telefono="{{ usuario.phone_number }}" data-rol="{{ usuario.rol }}">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <a href="{% url 'usuarios:cambiar_estado_usuario' usuario.id %}">
+              <button class="inactivar"><i class="fa-solid fa-user-slash"></i></button>
+            </a>
+            {% else %}
+            <button class="editar" disabled>
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <a href="{% url 'usuarios:cambiar_estado_usuario' usuario.id %}">
+              <button class="activar"><i class="fa-solid fa-user-check"></i></button>
+            </a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 20px">No hay usuarios registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   <div class="pagination">
     {% if page_obj.has_previous %}
     <a href="?page=1">&laquo; Primero</a>
