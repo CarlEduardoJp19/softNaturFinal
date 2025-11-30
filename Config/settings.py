@@ -19,12 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-8m$=11%5!af2-ya((l_d)k$i=#07evr*vdkhh207sj#crui+la'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["*"]
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,6 +38,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -164,6 +159,44 @@ CSRF_TRUSTED_ORIGINS = [
     'https://kamala-isotheral-charlyn.ngrok-free.dev'
 ]
 
+# Configuración para Railway
+import dj_database_url
+
+# Detectar si estamos en Railway
+if os.getenv('RAILWAY_ENVIRONMENT'):
+    DEBUG = False
+    SECRET_KEY = os.getenv('SECRET_KEY', SECRET_KEY)
+    
+    # ALLOWED_HOSTS para Railway
+    ALLOWED_HOSTS = [
+        os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),  # Dominio de Railway
+        '.up.railway.app',  # Todos los subdominios de Railway
+        '*'  # Temporal hasta que tengas el dominio
+    ]
+    
+    # Base de datos de Railway
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+    
+    # Archivos estáticos para producción
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    
+    # CSRF trusted origins
+    CSRF_TRUSTED_ORIGINS = [
+        'https://*.up.railway.app',
+        'https://kamala-isotheral-charlyn.ngrok-free.dev'
+    ]
+else:
+    # Configuración local (desarrollo)
+    DEBUG = True
+    ALLOWED_HOSTS = ["*"]
+    # La base de datos y todo lo demás ya está configurado arriba
 
 
 
