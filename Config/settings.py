@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8m$=11%5!af2-ya((l_d)k$i=#07evr*vdkhh207sj#crui+la'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-8m$=11%5!af2-ya((l_d)k$i=#07evr*vdkhh207sj#crui+la')
 
 # Application definition
 
@@ -74,14 +74,13 @@ WSGI_APPLICATION = 'Config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'softFinal',
-        'USER': 'eduardo',
-        'PASSWORD': 'eduardo123',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME', 'softFinal'),
+        'USER': os.getenv('DB_USER', 'eduardo'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'eduardo123'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
-
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
 # Password validation
@@ -146,8 +145,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = 'naturistasoftnatur@gmail.com'
-EMAIL_HOST_PASSWORD = 'jsaovucsgwdhtdro'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'naturistasoftnatur@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'jsaovucsgwdhtdro')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
@@ -165,8 +164,6 @@ import dj_database_url
 # Detectar si estamos en Railway
 if os.getenv('RAILWAY_ENVIRONMENT'):
     DEBUG = False
-    SECRET_KEY = os.getenv('SECRET_KEY', SECRET_KEY)
-    
     # ALLOWED_HOSTS para Railway
     ALLOWED_HOSTS = [
         os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),  # Dominio de Railway
