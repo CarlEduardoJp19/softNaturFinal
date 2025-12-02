@@ -158,27 +158,26 @@ CSRF_TRUSTED_ORIGINS = [
     'https://kamala-isotheral-charlyn.ngrok-free.dev'
 ]
 
-# Configuración para Railway
 import dj_database_url
 
-# Detectar si estamos en Railway
-if os.getenv('DATABASE_URL'):
+# Obtener DATABASE_URL
+database_url = os.getenv('DATABASE_URL')
+
+# Si existe DATABASE_URL, estamos en Railway (producción)
+if database_url:
     DEBUG = False
-    SECRET_KEY = os.getenv('SECRET_KEY', SECRET_KEY)
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    
     # ALLOWED_HOSTS para Railway
     ALLOWED_HOSTS = [
-        os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),  # Dominio de Railway
-        '.up.railway.app',  # Todos los subdominios de Railway
-        '*'  # Temporal hasta que tengas el dominio
+        os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),
+        '.up.railway.app',
+        '*'
     ]
     
     # Base de datos de Railway
     DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+        'default': dj_database_url.parse(database_url)
     }
     
     # Archivos estáticos para producción
@@ -194,7 +193,6 @@ else:
     # Configuración local (desarrollo)
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
-    # La base de datos y todo lo demás ya está configurado arriba
-
+    # La configuración de DATABASES local ya está definida arriba
 
 
