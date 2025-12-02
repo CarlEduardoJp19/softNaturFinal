@@ -162,8 +162,9 @@ CSRF_TRUSTED_ORIGINS = [
 import dj_database_url
 
 # Detectar si estamos en Railway
-if os.getenv('RAILWAY_ENVIRONMENT'):
+if os.getenv('DATABASE_URL'):
     DEBUG = False
+    SECRET_KEY = os.getenv('SECRET_KEY', SECRET_KEY)
     # ALLOWED_HOSTS para Railway
     ALLOWED_HOSTS = [
         os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),  # Dominio de Railway
