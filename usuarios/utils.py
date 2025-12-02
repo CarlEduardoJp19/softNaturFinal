@@ -6,13 +6,6 @@ from django.conf import settings
 from django.urls import reverse
 
 def enviar_email_activacion(user, request):
-    # Desactivado temporalmente para Railway - activar automáticamente
-    if not settings.DEBUG:
-        user.is_active = True
-        user.save()
-        return
-    
-    # Código original para desarrollo local
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
 
