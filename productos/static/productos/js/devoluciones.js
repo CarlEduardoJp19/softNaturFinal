@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     // ====== DATOS DE PRODUCTOS ======
     const productosScript = document.getElementById('productosData');
     const todosLosProductos = productosScript ? JSON.parse(productosScript.textContent) : [];
@@ -150,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnAbrirCamara.addEventListener('click', async () => {
         if (fotosCapturadas.length >= MAX_FOTOS) {
-            alert('Ya has agregado 3 fotos (máximo permitido)');
+            mostrarAlerta('Ya has agregado 3 fotos (máximo permitido)');
             return;
         }
 
@@ -159,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
             videoElement.srcObject = stream;
             modalCamara.classList.add('active');
         } catch (error) {
-            alert('Error al acceder a la cámara: ' + error.message);
+            mostrarAlerta('Error al acceder a la cámara: ' + error.message);
         }
     });
 
@@ -173,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnCapturar.addEventListener('click', () => {
         if (fotosCapturadas.length >= MAX_FOTOS) {
-            alert('Ya has agregado 3 fotos');
+            mostrarAlerta('Ya has agregado 3 fotos');
             return;
         }
         canvasElement.width = videoElement.videoWidth;
@@ -231,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.mensaje);
+                        mostrarAlerta(data.mensaje);
                         // Quitar producto devuelto del select
                         const valueToRemove = selectedOption.value;
                         if (selectedOption) selectedOption.remove();
@@ -260,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar Solicitud de Devolución';
                         }
                     } else {
-                        alert(data.mensaje);
+                        mostrarAlerta(data.mensaje);
                         
                         // 🔥 REACTIVAR BOTÓN EN CASO DE ERROR
                         if (btn) {
@@ -271,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch(err => {
                     console.error(err);
-                    alert('Ocurrió un error al enviar la devolución');
+                    mostrarAlerta('Ocurrió un error al enviar la devolución');
                     
                     // 🔥 REACTIVAR BOTÓN EN CASO DE ERROR DE RED
                     if (btn) {
@@ -282,3 +281,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function mostrarAlerta(titulo, mensaje) {
+    const overlay = document.getElementById("custom-alert");
+    const alertTitle = document.getElementById("alert-title");
+    const alertMessage = document.getElementById("alert-message");
+
+    alertTitle.textContent = titulo;
+    alertMessage.textContent = mensaje;
+
+    overlay.style.display = "flex";
+
+    document.getElementById("btn-aceptar").onclick = function () {
+        overlay.style.display = "none";
+    };
+}

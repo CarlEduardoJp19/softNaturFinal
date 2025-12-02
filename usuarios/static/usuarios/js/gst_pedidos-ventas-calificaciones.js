@@ -85,10 +85,6 @@ if (page) {
   <span class="info-value">${p.pago ? '<span style="color: green; font-weight: bold;"> Pagado</span>' : '<span style="color: red; font-weight: bold;">No pagado</span>'}</span>
 </div>
     <div class="info-item">
-      <span class="info-label">Método de Pago</span>
-      <span class="info-value">${p.metodo_pago}</span>
-    </div>
-    <div class="info-item">
       <span class="info-label">Fecha</span>
       <span class="info-value">${p.fecha}</span>
     </div>

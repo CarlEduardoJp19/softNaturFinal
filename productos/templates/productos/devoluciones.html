@@ -195,4 +195,23 @@ productos.forEach((p, i) => {
 
 {% block scripts %}
 <script src="{% static 'productos/js/devoluciones.js' %}?v={{ timestamp }}"></script>
+<!-- ALERTA PERSONALIZADA -->
+<div id="custom-alert" class="alert-overlay" style="display:none;">
+    <div class="alert-box">
+        <h2 id="alert-title">Mensaje</h2>
+        <p id="alert-message">Texto del mensaje.</p>
+        <div class="alert-buttons">
+            <button id="btn-aceptar">Aceptar</button>
+        </div>
+    </div>
+</div>
+{% if messages %}
+    {% for msg in messages %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                mostrarAlerta("Notificación", "{{ msg }}");
+            });
+        </script>
+    {% endfor %}
+{% endif %}
 {% endblock %}

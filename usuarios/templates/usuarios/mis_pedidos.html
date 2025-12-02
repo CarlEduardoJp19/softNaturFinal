@@ -6,6 +6,8 @@
 {% block content %}
 
 
+<a href="{% url 'productos:producto' %}" class="btn-volver">← Volver a la tienda</a>
+
 <div class="contenedor-pedidos">
     <h2>Mis Pedidos</h2>
     
@@ -84,8 +86,6 @@
         <p class="no-pedidos">No has hecho ningún pedido todavía.</p>
     {% endif %}
     
-    <div class="centrado">
-        <a href="{% url 'productos:producto' %}" class="btn-volver">← Volver a la tienda</a>
-    </div>
+    
 </div>
 {% endblock %}

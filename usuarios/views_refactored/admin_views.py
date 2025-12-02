@@ -148,53 +148,52 @@ def cambiar_estado_pedido(request, pedido_id):
 def detalle_pedido(request, pedido_id):
     try:
         pedido = get_object_or_404(Pedido, id=pedido_id)
-        usuario = getattr(pedido, 'usuario', None)
+        usuario = pedido.usuario
 
-        # Obtener los items del pedido
+        # Obtener dirección principal del usuario
+        direccion_p = usuario.direcciones.filter(es_principal=True).first()
+
+        telefono = direccion_p.telefono if direccion_p else 'N/A'
+        direccion = direccion_p.direccion_completa if direccion_p else 'N/A'
+        ciudad = direccion_p.ciudad if direccion_p else 'N/A'
+        codigo_postal = direccion_p.codigo_postal if direccion_p else 'N/A'
+
+        # Obtener productos del pedido
         items = pedido.items.all()
         productos = []
-
         for item in items:
             producto = item.producto
-
-            # Detectar correctamente el campo del nombre
             nombre_producto = getattr(producto, 'nombProduc', None) or getattr(producto, 'nombre', 'Producto')
 
             productos.append({
                 'nombre': nombre_producto,
                 'cantidad': item.cantidad,
                 'precio': float(getattr(producto, 'precio', 0)),
-                'subtotal': float(item.cantidad * getattr(producto, 'precio', 0))
+                'subtotal': float(item.cantidad * getattr(producto, 'precio', 0)),
             })
 
-        # Respuesta JSON
         return JsonResponse({
             'success': True,
             'pedido': {
                 'id': pedido.id,
-                'usuario': getattr(usuario, 'nombre', 'N/A') if usuario else 'N/A',
-                'email': getattr(usuario, 'email', 'N/A') if usuario else 'N/A',
-                'telefono': getattr(usuario, 'telefono', 'N/A') if usuario else 'N/A',
-                'direccion': getattr(usuario, 'direccion', 'N/A') if usuario else 'N/A',
-                'estado': getattr(pedido, 'estado', 'Pendiente'),
+                'usuario': usuario.nombre if hasattr(usuario, 'nombre') else usuario.email,
+                'email': usuario.email,
+                'telefono': telefono,
+                'direccion': direccion,
+                'ciudad': ciudad,
+                'codigo_postal': codigo_postal,
+                'estado': pedido.estado,
                 'pago': pedido.pago,
-                'pagado': pedido.pago,  # Por si acaso lo usas en otro lugar
-                'fecha': pedido.fecha_creacion.strftime('%d/%m/%Y') if hasattr(pedido, 'fecha_creacion') else 'N/A',
-                'hora': pedido.fecha_creacion.strftime('%H:%M:%S') if hasattr(pedido, 'fecha_creacion') else '',
-                'metodo_pago': getattr(pedido, 'metodo_pago', 'N/A'),
-                'total': float(getattr(pedido, 'total', 0)),
+                'fecha': pedido.fecha_creacion.strftime('%d/%m/%Y'),
+                'hora': pedido.fecha_creacion.strftime('%H:%M:%S'),
+                'total': float(pedido.total),
                 'productos': productos
             }
         })
 
     except Exception as e:
-        import traceback
-        print(f"Error completo: {traceback.format_exc()}")
-        return JsonResponse({
-            'success': False,
-            'message': f'Error: {str(e)}'
-        }, status=500)
-
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    
 @admin_required
 def informe_calificaciones(request):
     calificaciones = Calificacion.objects.select_related('usuario', 'producto').all()

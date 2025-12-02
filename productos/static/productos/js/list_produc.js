@@ -66,3 +66,40 @@ function abrirModalLote(productoId) {
 function cerrarModal(id) {
     document.getElementById(id).style.display = "none";
 }
+
+function mostrarAlerta(titulo, mensaje, callbackAceptar) {
+    document.getElementById("alert-title").innerText = titulo;
+    document.getElementById("alert-message").innerText = mensaje;
+
+    document.getElementById("custom-alert").style.display = "flex";
+
+    document.getElementById("btn-aceptar").onclick = function () {
+        cerrarAlerta();
+        callbackAceptar(); // Ejecuta la acción
+    };
+
+    document.getElementById("btn-cancelar").onclick = function () {
+        cerrarAlerta();
+    };
+}
+
+function cerrarAlerta() {
+    document.getElementById("custom-alert").style.display = "none";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const deleteButtons = document.querySelectorAll(".delete");
+
+    deleteButtons.forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            const url = this.getAttribute("href");
+
+            mostrarAlerta(
+                "¿Eliminar categoría?",
+                "Esta acción no se puede deshacer.",
+                () => { window.location.href = url; }
+            );
+        });
+    });
+});

@@ -40,18 +40,20 @@
                     <option value="año" {% if filtro_tiempo == 'año' %}selected{% endif %}>Este año</option>
                 </select>
             </div>
+
+            <!-- BOTONES DENTRO DEL FORM -->
+            <div class="botones">
+                <button type="submit" class="boton-filtrar">
+                    <i class="fa fa-filter"></i> Filtrar
+                </button>
+                <a href="{% url 'usuarios:historial_devoluciones' %}" class="boton-limpiar">
+                    <i class="fa fa-times"></i> Limpiar
+                </a>
+                <a href="{% url 'usuarios:exportar_devoluciones_excel' %}?estado={{ estado_filtro|default:'' }}&tiempo={{ filtro_tiempo|default:'' }}&buscar={{ busqueda|default:'' }}" class="boton-exportar">
+                    <i class="fa fa-file-excel"></i> Exportar a Excel
+                </a>
+            </div>
         </form>
-        <div class="botones">
-             <button type="submit" class="boton-filtrar">
-                <i class="fa fa-filter"></i> Filtrar
-            </button>
-            <a href="{% url 'usuarios:historial_devoluciones' %}" class="boton-limpiar">
-                <i class="fa fa-times"></i> Limpiar
-            </a>
-            <a href="{% url 'usuarios:exportar_devoluciones_excel' %}?estado={{ estado_filtro|default:'' }}&tiempo={{ filtro_tiempo|default:'' }}&buscar={{ busqueda|default:'' }}" class="boton-exportar">
-                <i class="fa fa-file-excel"></i> Exportar a Excel
-            </a>
-        </div>
     </div>
 
     <!-- Estadísticas -->
@@ -118,22 +120,22 @@
             </tbody>
         </table>
         {% if page_obj.has_other_pages %}
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-        <a href="?page=1{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">&laquo; Primera</a>
-        <a href="?page={{ page_obj.previous_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Anterior</a>
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page=1{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">&laquo; Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Anterior</a>
+            {% endif %}
+            
+            <span class="current">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+            
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Última &raquo;</a>
+            {% endif %}
+        </div>
         {% endif %}
-        
-        <span class="current">
-            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-        </span>
-        
-        {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Siguiente</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if filtro_tiempo %}&tiempo={{ filtro_tiempo }}{% endif %}{% if busqueda %}&buscar={{ busqueda }}{% endif %}">Última &raquo;</a>
-        {% endif %}
-    </div>
-    {% endif %}
     </div>
     {% else %}
     <div class="mensaje-sin-historial">

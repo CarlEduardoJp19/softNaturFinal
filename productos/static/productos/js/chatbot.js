@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+
     const toggleBtn = document.getElementById("chatbot-toggle");
     const chatBox = document.getElementById("chatbot-box");
     const chatForm = document.getElementById("chat-form");
@@ -37,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const htmlRespuesta = marked.parse(data.respuesta);
 
             chatMessages.innerHTML += `<div class="mensaje bot">
-                <img class="botimg" src="/media/uploads/products/robot.png"> 
+                <img class="botimg" src="${BOT_AVATAR_URL}"> 
                 <strong>Bot:</strong> ${htmlRespuesta}</div>`;
             chatMessages.scrollTop = chatMessages.scrollHeight;
 

@@ -180,7 +180,7 @@
 
   .btn-volver {
     display: inline-block;
-    margin-top: 2rem;
+    margin-top: 5px;
     padding: 12px 30px;
     background-color: #E5BE01;
     color: #292929;
@@ -189,6 +189,9 @@
     font-weight: bold;
     transition: all 0.3s ease;
     font-size: clamp(0.9rem, 2vw, 1rem);
+    margin-top: -20px;
+    margin-left: 20px;
+    
   }
 
   .btn-volver:hover {
@@ -197,9 +200,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
-  .centrado {
-    text-align: center;
-  }
+  
 
   /* Responsive adjustments */
   @media (max-width: 768px) {

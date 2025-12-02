@@ -54,22 +54,16 @@ document.addEventListener('DOMContentLoaded', function() {
   setInterval(() => mostrarComentario(index + 1), 5000);
 
   // --- Avatares según nombre ---
+  const AVATAR_URL = "/static/productos/img/comentarios.png";
+
   const comentarios = document.querySelectorAll(".comentario-card");
-  const nombresFemeninos = ["sofia", "maría", "maria", "laura", "ana", "camila", "juliana", "valentina", "carolina", "paula", "isabela", "andrea"];
 
-  comentarios.forEach(card => {
-    const usuario = card.querySelector(".comentario-usuario strong").textContent.toLowerCase().trim();
-    console.log("Nombre detectado:", usuario); // 👈 Aquí sí verás los nombres en la consola del navegador
-
-    const avatar = document.createElement("img");
-    avatar.classList.add("avatar");
-
-    const esMujer = nombresFemeninos.some(nombre => usuario.includes(nombre));
-
-    avatar.src = esMujer
-      ? "/media/uploads/products/avatar_mujer.png"
-      : "/media/uploads/products/avatar_hombre.png";
-
-    card.insertBefore(avatar, card.firstChild);
+comentarios.forEach(card => {
+  const avatar = document.createElement("img");
+  avatar.classList.add("avatar");
+  // ruta del avatar por defecto
+  avatar.src = AVATAR_URL; 
+  // lo insertamos al inicio de la tarjeta
+  card.insertBefore(avatar, card.firstChild);
   });
 });
