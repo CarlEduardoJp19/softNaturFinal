@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn Config.wsgi --log-file - --timeout 120
+web: pip install --no-cache-dir -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn Config.wsgi --log-file - --timeout 120
