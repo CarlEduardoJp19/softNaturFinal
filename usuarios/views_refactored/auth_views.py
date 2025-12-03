@@ -245,34 +245,89 @@ def login_admin(request):
     return render(request, 'usuarios/loginAdm.html')
 
 User = get_user_model()
+
 @csrf_exempt
 def enviar_codigo_verificacion(request):
+    logger.info("=" * 80)
+    logger.info("📧 API: enviar_codigo_verificacion")
+    logger.info(f"Método: {request.method}")
+    logger.info("=" * 80)
+    
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            email = data.get('email')
-            password = data.get('password')
+            email = data.get('email', '').strip()
+            password = data.get('password', '')
+            
+            logger.info(f"📧 Email recibido: '{email}'")
+            logger.info(f"🔒 Password recibida: {'Sí' if password else 'No'}")
+            
+            if not email or not password:
+                logger.warning("⚠️ Faltan credenciales")
+                return JsonResponse({
+                    'success': False,
+                    'mensaje': 'Email y contraseña son requeridos'
+                })
             
             # Verificar credenciales
+            logger.info("🔍 Autenticando usuario...")
             user = authenticate(request, username=email, password=password)
             
             if user is None:
+                logger.warning(f"❌ Credenciales incorrectas para: {email}")
                 return JsonResponse({
                     'success': False,
                     'mensaje': 'Credenciales incorrectas'
                 })
             
+            logger.info(f"✅ Usuario autenticado: {user.email} (ID: {user.id})")
+            logger.info(f"👤 Nombre: {user.nombre if hasattr(user, 'nombre') else 'N/A'}")
+            logger.info(f"🔐 Rol: {user.rol if hasattr(user, 'rol') else 'N/A'}")
+            
+            # Verificar que sea admin (si aplica)
+            if hasattr(user, 'rol') and user.rol != 'admin':
+                logger.warning(f"⚠️ Usuario no es admin. Rol: {user.rol}")
+                return JsonResponse({
+                    'success': False,
+                    'mensaje': 'No tienes permisos de administrador'
+                })
+            
             # Generar código de 6 dígitos
             codigo = ''.join([str(random.randint(0, 9)) for _ in range(6)])
             
+            logger.info(f"🔢 Código generado: '{codigo}'")
+            logger.info(f"📏 Longitud del código: {len(codigo)}")
+            logger.info(f"🔢 Tipo del código: {type(codigo)}")
+            
             # Guardar código en cache por 10 minutos
             cache_key = f'verification_code_{email}'
-            cache.set(cache_key, codigo, 600)  # 600 segundos = 10 minutos
+            logger.info(f"🔑 Cache key: '{cache_key}'")
+            logger.info(f"⏱️ TTL: 600 segundos (10 minutos)")
+            
+            cache.set(cache_key, codigo, 600)
+            
+            # Verificar que se guardó correctamente
+            codigo_guardado = cache.get(cache_key)
+            logger.info(f"✅ Verificación de guardado:")
+            logger.info(f"   Código guardado: '{codigo_guardado}'")
+            logger.info(f"   Tipo: {type(codigo_guardado)}")
+            logger.info(f"   ¿Es igual al generado?: {codigo_guardado == codigo}")
+            
+            if codigo_guardado != codigo:
+                logger.error("❌ ERROR CRÍTICO: El código no se guardó correctamente en cache")
+                return JsonResponse({
+                    'success': False,
+                    'mensaje': 'Error al guardar el código. Intenta nuevamente.'
+                })
             
             # Enviar email con código
+            logger.info("📤 Preparando email...")
+            
             asunto = 'Código de verificación - Unidos pensando en su salud'
+            nombre_usuario = user.nombre if hasattr(user, 'nombre') and user.nombre else 'Usuario'
+            
             mensaje = f'''
-Hola {user.nombre or 'Usuario'},
+Hola {nombre_usuario},
 
 Tu código de verificación es: {codigo}
 
@@ -284,103 +339,228 @@ Saludos,
 Equipo de Unidos pensando en su salud
             '''
             
-            send_mail(
-                asunto,
-                mensaje,
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
+            html_message = f'''
+            <html>
+                <body style="font-family: Arial; color: #333;">
+                    <h2 style="color: #0066ff;">Código de verificación</h2>
+                    <p>Hola <b>{nombre_usuario}</b>,</p>
+                    <p>Tu código de verificación es:</p>
+                    <div style="font-size: 32px; font-weight: bold; color: #d93025; letter-spacing: 8px; padding: 20px; background: #f5f5f5; border-radius: 8px; text-align: center; margin: 20px 0;">
+                        {codigo}
+                    </div>
+                    <p>Este código expirará en 10 minutos.</p>
+                    <p style="color: #666;">Si no solicitaste este código, puedes ignorar este correo.</p>
+                    <br>
+                    <p style="font-size: 14px; color: #999;">Equipo de <b>Unidos pensando en su salud</b></p>
+                </body>
+            </html>
+            '''
+            
+            logger.info(f"📧 Destinatario: {email}")
+            logger.info(f"📝 Asunto: {asunto}")
+            logger.info(f"🔢 Código en email: {codigo}")
+            logger.info("🚀 Enviando email...")
+            
+            resultado = send_mail(
+                subject=asunto,
+                message=mensaje,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
                 fail_silently=False,
-                html_message=f'''
-                <html>
-                    <body style="font-family: Arial; color: #333;">
-                        <h2 style="color: #0066ff;">Código de verificación</h2>
-                        <p>Hola <b>{user.nombre or 'Usuario'}</b>,</p>
-                        <p>Tu código de verificación es:</p>
-                        <div style="font-size: 22px; font-weight: bold; color: #d93025;">{codigo}</div>
-                        <p>Este código expirará en 10 minutos.</p>
-                        <p>Si no solicitaste este código, puedes ignorar este correo.</p>
-                        <br>
-                        <p style="font-size: 14px;">Equipo de <b>Unidos pensando en su salud</b></p>
-                    </body>
-                </html>
-                '''
+                html_message=html_message
             )
+            
+            logger.info(f"✅ Email enviado. Resultado de send_mail(): {resultado}")
+            
+            if resultado != 1:
+                logger.warning(f"⚠️ send_mail() retornó {resultado} (esperado: 1)")
+            
+            logger.info("=" * 80)
+            logger.info("✅ Proceso completado exitosamente")
+            logger.info("=" * 80)
             
             return JsonResponse({
                 'success': True,
                 'mensaje': 'Código enviado exitosamente al correo.'
             })
             
+        except json.JSONDecodeError as e:
+            logger.error(f"❌ Error al parsear JSON: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'mensaje': 'Datos inválidos en la solicitud'
+            })
+            
         except Exception as e:
-            print(f"Error al enviar código: {str(e)}")
+            logger.error("=" * 80)
+            logger.error("❌ ERROR EN enviar_codigo_verificacion")
+            logger.error(f"Tipo: {type(e).__name__}")
+            logger.error(f"Mensaje: {str(e)}")
+            logger.error("Traceback:")
+            import traceback
+            logger.error(traceback.format_exc())
+            logger.error("=" * 80)
+            
             return JsonResponse({
                 'success': False,
                 'mensaje': f'Error al enviar el código: {str(e)}'
             })
     
+    logger.warning("⚠️ Método no POST")
     return JsonResponse({'success': False, 'mensaje': 'Método no permitido'})
 
+
+@csrf_exempt
 def verificar_codigo(request):
+    logger.info("=" * 80)
+    logger.info("🔐 API: verificar_codigo")
+    logger.info(f"Método: {request.method}")
+    logger.info("=" * 80)
+    
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            email = data.get('email')
-            password = data.get('password')
-            codigo_ingresado = data.get('codigo_verificacion')
-
+            email = data.get('email', '').strip()
+            password = data.get('password', '')
+            codigo_ingresado = data.get('codigo_verificacion', '').strip()
+            
+            logger.info(f"📧 Email: '{email}'")
+            logger.info(f"🔢 Código ingresado: '{codigo_ingresado}'")
+            logger.info(f"📏 Longitud: {len(codigo_ingresado)}")
+            logger.info(f"🔢 Tipo: {type(codigo_ingresado)}")
+            
+            if not email or not password or not codigo_ingresado:
+                logger.warning("⚠️ Faltan datos")
+                return JsonResponse({
+                    'success': False,
+                    'mensaje': 'Todos los campos son requeridos'
+                })
+            
             # Obtener código desde cache
             cache_key = f'verification_code_{email}'
             codigo_cache = cache.get(cache_key)
-
+            
+            logger.info(f"🔑 Cache key: '{cache_key}'")
+            logger.info(f"💾 Código en cache: '{codigo_cache}'")
+            logger.info(f"🔢 Tipo en cache: {type(codigo_cache)}")
+            
             # Obtener intentos desde cache
             intentos_key = f'intentos_codigo_{email}'
             intentos = cache.get(intentos_key, 0)
-
+            
+            logger.info(f"🔢 Intentos actuales: {intentos}/3")
+            
+            # Verificar si existe el código
+            if codigo_cache is None:
+                logger.warning("⚠️ Código no encontrado en cache (expirado o no existe)")
+                return JsonResponse({
+                    'success': False,
+                    'mensaje': 'El código ha expirado. Solicita uno nuevo.',
+                    'redirect': True
+                })
+            
+            # Convertir ambos a string para comparar
+            codigo_cache_str = str(codigo_cache).strip()
+            codigo_ingresado_str = str(codigo_ingresado).strip()
+            
+            logger.info("🔍 COMPARACIÓN DE CÓDIGOS:")
+            logger.info(f"   Cache (original):    '{codigo_cache}'")
+            logger.info(f"   Cache (string):      '{codigo_cache_str}'")
+            logger.info(f"   Ingresado (original): '{codigo_ingresado}'")
+            logger.info(f"   Ingresado (string):   '{codigo_ingresado_str}'")
+            logger.info(f"   Longitud cache:       {len(codigo_cache_str)}")
+            logger.info(f"   Longitud ingresado:   {len(codigo_ingresado_str)}")
+            logger.info(f"   ¿Son iguales?:        {codigo_cache_str == codigo_ingresado_str}")
+            
+            # Debug: mostrar cada carácter
+            logger.info("   Carácter por carácter:")
+            for i, (c1, c2) in enumerate(zip(codigo_cache_str, codigo_ingresado_str)):
+                logger.info(f"      Pos {i}: cache='{c1}' (ord:{ord(c1)}) vs ingresado='{c2}' (ord:{ord(c2)}) - {'✅' if c1==c2 else '❌'}")
+            
             # ✅ Verificar primero si es correcto
-            if codigo_ingresado == codigo_cache:
+            if codigo_ingresado_str == codigo_cache_str:
+                logger.info("✅ CÓDIGO CORRECTO")
+                logger.info("🔍 Autenticando usuario para login...")
+                
                 user = authenticate(request, username=email, password=password)
+                
                 if user:
+                    logger.info(f"✅ Usuario autenticado: {user.email}")
+                    logger.info(f"🔐 Haciendo login...")
+                    
                     login(request, user)
+                    
                     # Limpiar cache
                     cache.delete(cache_key)
                     cache.delete(intentos_key)
+                    logger.info("🗑️ Cache limpiado (código e intentos)")
+                    
+                    logger.info("=" * 80)
+                    logger.info("✅ LOGIN EXITOSO")
+                    logger.info("=" * 80)
+                    
                     return JsonResponse({
                         'success': True,
                         'mensaje': 'Código correcto. Redirigiendo...',
                         'redirect_url': '/usuarios/dashboard/'
                     })
                 else:
+                    logger.error("❌ Error: authenticate() retornó None con credenciales que antes funcionaron")
                     return JsonResponse({
                         'success': False,
-                        'mensaje': 'Usuario o contraseña incorrectos. Vuelve a iniciar sesión.',
+                        'mensaje': 'Error de autenticación. Vuelve a iniciar sesión.',
                         'redirect': True
                     })
 
             # Código incorrecto → aumentar intentos
+            logger.warning("❌ CÓDIGO INCORRECTO")
             intentos += 1
-            cache.set(intentos_key, intentos, 600)  # Guardar 10 minutos también
-
+            cache.set(intentos_key, intentos, 600)
+            logger.info(f"📊 Intentos actualizados: {intentos}/3")
+            
             if intentos >= 3:
+                logger.warning("⚠️ Límite de intentos alcanzado (3/3)")
                 cache.delete(cache_key)
                 cache.delete(intentos_key)
+                logger.info("🗑️ Cache limpiado por exceso de intentos")
+                
                 return JsonResponse({
                     'success': False,
                     'mensaje': 'Has superado los 3 intentos. Vuelve a iniciar sesión.',
                     'redirect': True
                 })
-
+            
+            logger.info(f"⚠️ Intento fallido {intentos}/3")
+            logger.info("=" * 80)
+            
             return JsonResponse({
                 'success': False,
                 'mensaje': f'Código incorrecto. Intento {intentos} de 3.'
             })
 
+        except json.JSONDecodeError as e:
+            logger.error(f"❌ Error al parsear JSON: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'mensaje': 'Datos inválidos en la solicitud'
+            })
+
         except Exception as e:
-            print(f"Error al verificar código: {str(e)}")
+            logger.error("=" * 80)
+            logger.error("❌ ERROR EN verificar_codigo")
+            logger.error(f"Tipo: {type(e).__name__}")
+            logger.error(f"Mensaje: {str(e)}")
+            logger.error("Traceback:")
+            import traceback
+            logger.error(traceback.format_exc())
+            logger.error("=" * 80)
+            
             return JsonResponse({
                 'success': False,
                 'mensaje': f'Error al verificar el código: {str(e)}'
             })
 
+    logger.warning("⚠️ Método no POST")
     return JsonResponse({'success': False, 'mensaje': 'Método no permitido'})
 
 User = get_user_model()
