@@ -140,14 +140,30 @@ CLOUDINARY_STORAGE = {
 
 LOGIN_URL = 'usuarios:login'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'naturistasoftnatur@gmail.com')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'jsaovucsgwdhtdro')
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'naturistasoftnatur@gmail.com')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'jsaovucsgwdhtdro')
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+RESEND_API_KEY = os.getenv('RESEND_API_KEY', default='')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', default='noreply@softnatur.sebacry.me')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# Configuración adicional
+EMAIL_SUBJECT_PREFIX = '[softnatur]'
+EMAIL_USE_LOCALTIME = False
+EMAIL_TIMEOUT = 30
+
+# Resend API Configuration (no SMTP ports, works with Render free tier)
+if RESEND_API_KEY:
+    EMAIL_BACKEND = 'Config.emailsbackends.ResendEmailBackend'
+else:
+    # Fallback para desarrollo sin API key
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 

@@ -1,10 +1,11 @@
 {% extends 'usuarios/baseU.html' %}
 {% load static %}
-
 {% block styles %}
 <link rel="stylesheet" href="{% static 'productos/css/list_produc.css' %}" />
 {% endblock %}
-
+{% block scripts %}
+<script src="{% static 'productos/js/editar_producto.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="containerEditar">
     <h2>Editar Producto</h2>
@@ -19,24 +20,20 @@
         <div class="form-groupEditar">{{ form.imgProduc.label_tag }}{{ form.imgProduc }}{{ form.imgProduc.errors }}</div>
         <div class="btn-container-Editar">
             <button type="submit" class="btn-guardar-Editar">Guardar Cambios</button>
-            <a href="{% url 'productos:list_product' %}" class="btn-guardar-volver-Editar"> Cancelar</a>
+            <a href="{% url 'productos:list_product' %}" class="btn-guardar-volver-Editar">Cancelar</a>
         </div>
     </form>
 </div>
-<div id="custom-alert" class="alert-overlay">
+
+<!-- Modal de alerta personalizada (OCULTO por defecto) -->
+<div id="custom-alert" class="alert-overlay" style="display: none;">
     <div class="alert-box">
         <h2 id="alert-title">Mensaje</h2>
         <p id="alert-message">Texto del mensaje</p>
         <div class="alert-buttons">
-            <button id="btn-cancelar">Cancelar</button>
-            <button id="btn-aceptar">Aceptar</button>
+            <button id="btn-cancelar" type="button">Cancelar</button>
+            <button id="btn-aceptar" type="button">Aceptar</button>
         </div>
     </div>
 </div>
-
 {% endblock %}
-
-{% block scripts %}
-<script src="{% static 'productos/js/editar_producto.js' %}"></script>
-{% endblock %}
-

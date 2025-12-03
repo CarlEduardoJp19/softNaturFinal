@@ -57,7 +57,7 @@ urlpatterns = [
 
     # ==================== PEDIDOS (ADMIN) ====================
     path('pedidos/', admin_views.pedidos_view, name="pedidos"),
-    path('exportar-pedidos-excel/', exportacion_views.exportar_pedidos_excel, name='exportar_pedidos_excel'),
+    path('pedidos/exportar/', exportacion_views.exportar_pedidos_excel, name='exportar_pedidos_excel'),
     path('pedidos/<int:pedido_id>/cambiar-estado/', admin_views.cambiar_estado_pedido, name='cambiar_estado_pedido'),
     path('detalle_pedido/<int:pedido_id>/', admin_views.detalle_pedido, name='detalle_pedido'),
     path('cambiar_estado_pedido/<int:pedido_id>/', admin_views.cambiar_estado_pedido, name='cambiar_estado_pedido'),  # Duplicada (se puede eliminar)

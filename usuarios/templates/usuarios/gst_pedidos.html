@@ -36,9 +36,10 @@
   <div class="table-container">
     <div class="filtros-rapidos">
       <div class="export-container">
-        <button class="btn-exportar">
+        <a href="{% url 'usuarios:exportar_pedidos_excel' %}" class="btn-exportar">
           <i class="fas fa-file-excel"></i> Exportar a Excel
-        </button>
+        </a>
+
       </div>
 
       <h3>Filtros rápidos</h3>

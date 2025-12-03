@@ -20,7 +20,7 @@ def editar_perfil(request):
         if form.is_valid():
             form.save()
             print("✅ Guardado exitoso")  # Para debug
-            messages.success(request, "Perfil actualizado correctamente.")
+            messages.success(request, "Perfil actualizado correctamente.", extra_tags="perfil_editado")
             return redirect('usuarios:editar_perfil')
         else:
             print("❌ Errores:", form.errors)  # Para debug
@@ -29,7 +29,6 @@ def editar_perfil(request):
         form = EditarPerfilForm(instance=user)
 
     return render(request, 'usuarios/editar_perfil.html', {'form': form})
-
 
 @login_required(login_url='usuarios:login')
 def mis_pedidos(request):
