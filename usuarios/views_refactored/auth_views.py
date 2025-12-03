@@ -10,6 +10,11 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
+import logging
+import traceback
+import sys
+from django.shortcuts import render
+from django.conf import settings
 
 from ..forms import LoginForm, UsuarioCreationForm
 from ..models import Usuario
@@ -18,17 +23,100 @@ from productos.models import CarritoItem, Producto
 
 User = get_user_model()
 
+# Configurar logger
+logger = logging.getLogger(__name__)
+
 def register_view(request):
+    logger.info("=" * 80)
+    logger.info("🔵 INICIO - Vista de registro")
+    logger.info(f"Método: {request.method}")
+    logger.info(f"Path: {request.path}")
+    logger.info("=" * 80)
+    
     if request.method == "POST":
-        form = UsuarioCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()  # ya se guarda como is_active=False
-            enviar_email_activacion(user, request)  # enviamos el correo de activación
-            return render(request, "usuarios/confirmacion.html")  # mensaje de revisa tu correo
-        else:
-            print("❌ Errores del formulario:", form.errors)
+        logger.info("📝 POST recibido en registro")
+        logger.info(f"Datos recibidos: {list(request.POST.keys())}")
+        
+        try:
+            form = UsuarioCreationForm(request.POST)
+            
+            logger.info("🔍 Validando formulario...")
+            
+            if form.is_valid():
+                logger.info("✅ Formulario válido")
+                
+                # Guardar usuario
+                logger.info("💾 Guardando usuario en la base de datos...")
+                user = form.save()
+                
+                logger.info(f"✅ Usuario guardado exitosamente:")
+                logger.info(f"   ID: {user.id}")
+                logger.info(f"   Email: {user.email}")
+                logger.info(f"   Nombre: {user.nombre if hasattr(user, 'nombre') else 'N/A'}")
+                logger.info(f"   Is Active: {user.is_active}")
+                
+                # Verificar configuración de email ANTES de enviar
+                logger.info("=" * 80)
+                logger.info("📧 CONFIGURACIÓN DE EMAIL")
+                logger.info(f"Backend: {settings.EMAIL_BACKEND}")
+                logger.info(f"From: {settings.DEFAULT_FROM_EMAIL}")
+                logger.info(f"RESEND_API_KEY existe: {'✅' if settings.RESEND_API_KEY else '❌'}")
+                if settings.RESEND_API_KEY:
+                    logger.info(f"API Key preview: {settings.RESEND_API_KEY[:15]}...")
+                logger.info("=" * 80)
+                
+                # Enviar email de activación
+                logger.info("📤 Llamando a enviar_email_activacion()...")
+                try:
+                    enviar_email_activacion(user, request)
+                    logger.info("✅ enviar_email_activacion() ejecutada sin errores")
+                except Exception as email_error:
+                    logger.error("=" * 80)
+                    logger.error("❌ ERROR EN enviar_email_activacion()")
+                    logger.error(f"Tipo: {type(email_error).__name__}")
+                    logger.error(f"Mensaje: {str(email_error)}")
+                    logger.error("Traceback:")
+                    logger.error(traceback.format_exc())
+                    logger.error("=" * 80)
+                    
+                    # Imprimir también a stderr
+                    print("❌ ERROR EMAIL:", str(email_error), file=sys.stderr)
+                    print(traceback.format_exc(), file=sys.stderr)
+                    
+                    # Re-lanzar el error para que se vea el 500
+                    raise
+                
+                logger.info("🎉 Registro completado, mostrando página de confirmación")
+                return render(request, "usuarios/confirmacion.html")
+                
+            else:
+                logger.warning("⚠️ Formulario NO válido")
+                logger.warning(f"Errores del formulario: {form.errors}")
+                logger.warning(f"Errores en JSON: {form.errors.as_json()}")
+                print("❌ Errores del formulario:", form.errors)
+                
+        except Exception as e:
+            logger.error("=" * 80)
+            logger.error("❌❌❌ ERROR CRÍTICO EN REGISTRO ❌❌❌")
+            logger.error(f"Tipo: {type(e).__name__}")
+            logger.error(f"Mensaje: {str(e)}")
+            logger.error("Traceback completo:")
+            logger.error(traceback.format_exc())
+            logger.error("=" * 80)
+            
+            # Imprimir a stderr también
+            print("=" * 80, file=sys.stderr)
+            print("❌ ERROR CRÍTICO:", str(e), file=sys.stderr)
+            print(traceback.format_exc(), file=sys.stderr)
+            print("=" * 80, file=sys.stderr)
+            
+            # Re-lanzar para ver el error 500 real
+            raise
+            
     else:
+        logger.info("📄 GET request - Mostrando formulario de registro")
         form = UsuarioCreationForm()
+    
     return render(request, "usuarios/register.html", {"form": form})
 
 def login_view(request):
