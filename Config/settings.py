@@ -203,6 +203,8 @@ if database_url:
     # CSRF trusted origins
     CSRF_TRUSTED_ORIGINS = [
         'https://*.up.railway.app',
+        'https://web-production-1e907.up.railway.app',
+        'https://softnatur.sebacry.me',
         'https://kamala-isotheral-charlyn.ngrok-free.dev'
     ]
 else:
