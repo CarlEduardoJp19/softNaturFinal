@@ -1,0 +1,1019 @@
+/* GST_PEDIDOS */
+body {
+    background-color: #f5f5f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #495057;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1700px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-left: 30px;
+}
+
+h1 {
+    text-align: center;
+    margin: 10px 0 30px 0;
+    color: #292929;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.stat-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+
+.stat-card .numero {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.stat-card.pendientes .numero {
+    color: #E5BE01;
+}
+
+.stat-card.enviados .numero {
+    color: #28a745;
+}
+
+.stat-card.entregados .numero {
+    color: #007bff;
+}
+
+.stat-card.total .numero {
+    color: #005E27;
+}
+
+.filtros-rapidos {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    margin-left: 20px;
+}
+
+.filtros-rapidos h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.filtros-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filtro-btn {
+    padding: 8px 16px;
+    border: 2px solid #dee2e6;
+    background: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    color: #495057;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.filtro-btn:hover {
+    background: #f8f9fa;
+}
+
+.filtro-btn.active {
+    background: #005E27;
+    color: white;
+    border-color: #005E27;
+}
+
+.search-container {
+    padding: 20px;
+    margin-top: 30px;
+    margin-left: -25px;
+}
+
+.search-input {
+    width: 98%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 14px;
+}
+
+.table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+}
+
+th {
+    text-align: center;
+    padding: 15px 12px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: center;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.export-container {
+    display: flex;
+    justify-content: flex-end;
+    /* Botón a la derecha en pantallas grandes */
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Estilos del botón (solo ejemplo) */
+.btn-exportar {
+    background: #E5BE01;
+    color: #292929;
+    border: none;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+
+.btn-exportar:hover {
+    background-color: #F29727;
+}
+
+.btn-estado {
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.btn-estado:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.btn-estado.pendiente {
+    background: #E5BE01;
+    color: #292929;
+}
+
+.btn-estado.enviado {
+    background: #28a745;
+}
+
+.btn-estado.entregado {
+    background: #005E27;
+}
+
+.btn-estado.detalle {
+    background: #007bff;
+}
+
+.estado-actual {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.estado-actual.pendiente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.estado-actual.enviado {
+    background: #d4edda;
+    color: #155724;
+}
+
+.estado-actual.entregado {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.pago-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.pago-badge.pagado {
+    background: #d4edda;
+    color: #155724;
+}
+
+.pago-badge.no-pagado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.modal-content {
+    background-color: white;
+    margin: 3% auto;
+    padding: 0;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 900px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.4s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #005E27 0%, #007a35 100%);
+    color: white;
+    padding: 25px 35px;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 94, 39, 0.2);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.close {
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 35px;
+}
+
+.pedido-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border-left: 4px solid #005E27;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-label {
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 15px;
+    color: #212529;
+    font-weight: 600;
+}
+
+.productos-section {
+    margin-top: 25px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #005E27;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #005E27;
+}
+
+.productos-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.productos-table thead {
+    background: linear-gradient(135deg, #005E27 0%, #007a35 100%);
+    color: white;
+}
+
+.productos-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.productos-table tbody tr {
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.productos-table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.productos-table tbody tr:hover {
+    background: #e3f2e8;
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(0, 94, 39, 0.1);
+}
+
+.productos-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 14px;
+    color: #495057;
+}
+
+.cantidad-badge {
+    background: #005E27;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.precio-cell {
+    font-weight: 600;
+    color: #005E27;
+}
+
+.total-pedido {
+    background: linear-gradient(135deg, #005E27 0%, #007a35 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin-top: 30px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 94, 39, 0.3);
+}
+
+.total-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.total-amount {
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.alerta {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    z-index: 2000;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.alerta.success {
+    background: #28a745;
+}
+
+.alerta.error {
+    background: #dc3545;
+}
+
+.confirmar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.confirmar-box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.confirmar-box h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.confirmar-box button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 5px;
+    transition: all 0.2s ease;
+}
+
+.confirmar-box .btn-si {
+    background: #005E27;
+    color: white;
+}
+
+.confirmar-box .btn-si:hover {
+    background: #004a1f;
+}
+
+.confirmar-box .btn-no {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.confirmar-box .btn-no:hover {
+    background: #e0e0e0;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Dar ancho fijo a la columna ACCIONES */
+table thead tr th:nth-child(6),
+table tbody tr td:nth-child(6) {
+    width: 250px !important;
+    min-width: 220px !important;
+    max-width: 200px !important;
+}
+
+/* Hacer la celda un contenedor de posición relativa */
+table tbody tr td:nth-child(6) {
+    position: relative !important;
+    display: block !important;
+    padding: 15px 12px !important;
+    text-align: left !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+
+/* Contenedor para los 3 botones de estado (amarillo, verde, check) */
+table tbody tr td:nth-child(6) .btn-estado:not(.detalle) {
+    display: inline-block !important;
+    margin-right: 4px !important;
+    vertical-align: middle !important;
+}
+
+/* Botón VER siempre en posición fija a la derecha */
+table tbody tr td:nth-child(6) .btn-estado.detalle {
+    position: absolute !important;
+    right: 30px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+    margin-left: 4px !important;
+}
+
+/* Asegurar que el hover funcione */
+table tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* ========================================= */
+/* MEDIA QUERIES RESPONSIVE */
+/* ========================================= */
+
+/* Tablets grandes (1024px y menos) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .export-container {
+        margin-left: 400px;
+    }
+
+    .stats-container {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+    }
+
+    .filtros-rapidos {
+        margin-left: 0;
+    }
+
+    .search-container {
+        margin-left: 0;
+        padding: 10px;
+        width: 900px;
+    }
+}
+
+@media (max-width: 990px) {
+    .container {
+        margin-left: 200px;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .export-container {
+        margin-left: 400px;
+    }
+
+    .stats-container {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+    }
+
+    .filtros-rapidos {
+        margin-left: 0;
+    }
+
+    .search-container {
+        margin-left: 0;
+        padding: 10px;
+        width: 900px;
+    }
+}
+
+/* Tablets (768px y menos) */
+@media (max-width: 768px) {
+    .container {
+        margin-left: 150px;
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin: 10px 0 20px 0;
+    }
+
+    .stats-container {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .stat-card .numero {
+        font-size: 24px;
+    }
+
+    .stat-card h3 {
+        font-size: 12px;
+    }
+
+    .filtros-rapidos {
+        padding: 15px;
+    }
+
+    .filtros-rapidos h3 {
+        font-size: 14px;
+    }
+
+    .filtro-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .btn-exportar {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    /* Modal responsive */
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+    }
+
+    .modal-header {
+        padding: 20px;
+    }
+
+    .modal-header h2 {
+        font-size: 20px;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .pedido-info {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .productos-table {
+        font-size: 12px;
+    }
+
+    .productos-table th,
+    .productos-table td {
+        padding: 10px 8px;
+    }
+
+    .total-pedido {
+        padding: 20px;
+    }
+
+    .total-amount {
+        font-size: 28px;
+    }
+
+    /* Tabla con scroll */
+    th,
+    td {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+}
+
+/* Móviles (480px y menos) */
+@media (max-width: 480px) {
+    .container {
+        padding: 8px;
+        margin-left: 100px;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+    }
+
+    .stats-container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-card .numero {
+        font-size: 20px;
+    }
+
+    .filtros-rapidos {
+        padding: 12px;
+    }
+
+    .filtros-buttons {
+        gap: 8px;
+    }
+
+    .filtro-btn {
+        padding: 5px 10px;
+        font-size: 12px;
+        flex: 1 1 calc(50% - 8px);
+        text-align: center;
+    }
+
+    .search-container {
+        padding: 10px;
+    }
+
+    .search-input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .btn-exportar {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    /* Acciones en mobile */
+    table thead tr th:nth-child(6),
+    table tbody tr td:nth-child(6) {
+        width: auto !important;
+        min-width: 150px !important;
+    }
+
+    table tbody tr td:nth-child(6) {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 10px !important;
+    }
+
+    table tbody tr td:nth-child(6) .btn-estado {
+        display: block !important;
+        width: 100% !important;
+        margin: 3px 0 !important;
+        text-align: center;
+    }
+
+    table tbody tr td:nth-child(6) .btn-estado.detalle {
+        position: static !important;
+        transform: none !important;
+        right: auto !important;
+        top: auto !important;
+    }
+
+    .btn-estado {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .estado-actual,
+    .pago-badge {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+
+    /* Modal en móvil */
+    .modal-content {
+        width: 98%;
+        margin: 2% auto;
+        max-height: 95vh;
+    }
+
+    .modal-header {
+        padding: 15px;
+    }
+
+    .modal-header h2 {
+        font-size: 18px;
+    }
+
+    .close {
+        width: 35px;
+        height: 35px;
+        font-size: 24px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .section-title {
+        font-size: 16px;
+    }
+
+    .productos-table th,
+    .productos-table td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+
+    .cantidad-badge {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+
+    .total-pedido {
+        padding: 15px;
+    }
+
+    .total-amount {
+        font-size: 24px;
+    }
+
+    .total-label {
+        font-size: 12px;
+    }
+
+    /* Confirmar box */
+    .confirmar-box {
+        padding: 20px;
+        max-width: 90%;
+    }
+
+    .confirmar-box h3 {
+        font-size: 16px;
+    }
+
+    .confirmar-box button {
+        padding: 8px 16px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    /* Alerta */
+    .alerta {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+
+    .export-container {
+        justify-content: center;
+        /* Botón centrado */
+        margin-bottom: 20px;
+    }
+
+    th,
+    td {
+        padding: 8px 6px;
+        font-size: 12px;
+    }
+}
+
+/* Móviles muy pequeños (360px y menos) */
+@media (max-width: 360px) {
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    .export-container {
+        justify-content: center;
+        /* Botón centrado */
+        margin-bottom: 20px;
+    }
+
+    .stat-card .numero {
+        font-size: 18px;
+    }
+
+    .filtro-btn {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .btn-exportar {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    th,
+    td {
+        padding: 6px 4px;
+        font-size: 11px;
+    }
+
+    .btn-estado {
+        padding: 6px 8px;
+        font-size: 10px;
+    }
+}

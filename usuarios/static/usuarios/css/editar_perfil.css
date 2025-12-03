@@ -1,0 +1,381 @@
+/* EDITAR PERFIL */
+.body-editar {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f8f9fb 0%, #e8eef3 100%);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+
+.volver-editar {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+.volver-editar a {
+    text-decoration: none;
+    background-color: #e5be01;
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volver-editar a:hover {
+    background-color: #f29727;
+    transform: translateX(-3px);
+}
+
+.card-editar {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    width: 100%;
+    max-width: 480px;
+    text-align: left;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-editar h1 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.subtitle-editar {
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.form-group-editar {
+    margin-bottom: 24px;
+}
+
+.form-group-editar label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.form-group-editar label .required {
+    color: #e74c3c;
+    margin-left: 3px;
+}
+
+.form-group-editar input {
+    width: 94%;
+    padding: 12px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+
+.form-group-editar input:focus {
+    border-color: #e5be01;
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(229, 190, 1, 0.1);
+}
+
+.form-group-editar input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-guardar-editar {
+    background-color: #e5be01;
+    border: none;
+    color: #000;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-guardar-editar:hover {
+    background-color: #f29727;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 190, 1, 0.3);
+}
+
+.btn-guardar-editar:active {
+    transform: translateY(0);
+}
+
+.mensaje-editar {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    display: none;
+}
+
+.mensaje-editar.exito {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+.mensaje-editar.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}
+
+.info-adicional-editar {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 13px;
+    color: #7f8c8d;
+}
+
+
+.alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    /* lo controlas con JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.alert-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.alert-buttons button {
+    margin: 10px 5px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#btn-aceptar {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#btn-cancelar {
+    background-color: #f44336;
+    color: white;
+}
+
+/* 🔴 Marcado de error en inputs */
+.input-error {
+    border: 2px solid #e20000 !important;
+    background: #ffe6e6;
+}
+
+/* Mensaje de error debajo del campo */
+.error {
+    color: #e20000;
+    font-size: 13px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Estilo para botón desactivado */
+.btn-guardar-editar:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+.btn-guardar-editar:disabled:hover {
+    background-color: #cccccc;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Tablets grandes y pantallas medianas */
+@media (max-width: 1024px) {
+    .card-editar {
+        max-width: 500px;
+    }
+
+    .volver-editar {
+        top: 20px;
+        left: 20px;
+    }
+}
+
+/* Tablets en modo portrait */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+        justify-content: flex-start;
+        padding-top: 80px;
+    }
+
+    .card-editar {
+        max-width: 100%;
+        padding: 35px 25px;
+        margin-top: 0;
+    }
+
+    .card-editar h1 {
+        font-size: 24px;
+    }
+
+    .volver-editar {
+        top: 15px;
+        left: 15px;
+    }
+
+    .volver-editar a {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Móviles grandes */
+@media (max-width: 600px) {
+    .card-editar {
+        padding: 30px 20px;
+        border-radius: 12px;
+    }
+
+    .card-editar h1 {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    .subtitle-editar {
+        font-size: 13px;
+        margin-bottom: 25px;
+    }
+
+    .form-group-editar {
+        margin-bottom: 20px;
+    }
+
+    .form-group-editar input {
+        padding: 11px 12px;
+        font-size: 14px;
+    }
+
+    .btn-guardar-editar {
+        padding: 13px 18px;
+        font-size: 15px;
+    }
+
+    .info-adicional-editar {
+        font-size: 12px;
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 400px) {
+    body {
+        padding: 10px;
+        padding-top: 70px;
+    }
+
+    .card-editar {
+        padding: 25px 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-editar h1 {
+        font-size: 20px;
+    }
+
+    .subtitle-editar {
+        font-size: 12px;
+    }
+
+    .volver-editar {
+        top: 10px;
+        left: 10px;
+    }
+
+    .volver-editar a {
+        padding: 7px 14px;
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    .form-group-editar label {
+        font-size: 13px;
+    }
+
+    .form-group-editar input {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .btn-guardar-editar {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Modo landscape en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+    body {
+        padding-top: 15px;
+        align-items: flex-start;
+    }
+
+    .card-editar {
+        margin-top: 60px;
+        margin-bottom: 20px;
+    }
+
+    .volver-editar {
+        top: 10px;
+        left: 10px;
+    }
+}
