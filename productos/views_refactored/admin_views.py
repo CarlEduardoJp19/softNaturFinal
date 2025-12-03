@@ -268,39 +268,57 @@ logger = logging.getLogger(__name__)
 
 @admin_required
 def agregar_categoria(request):
-    logger.info("=" * 50)
-    logger.info(f"🔹 REQUEST METHOD: {request.method}")
-    logger.info(f"🔹 REQUEST PATH: {request.path}")
-    logger.info(f"🔹 REQUEST ORIGIN: {request.META.get('HTTP_ORIGIN', 'No origin')}")
-    logger.info(f"🔹 REQUEST REFERER: {request.META.get('HTTP_REFERER', 'No referer')}")
-    logger.info(f"🔹 REMOTE_ADDR: {request.META.get('REMOTE_ADDR', 'No IP')}")
-    logger.info(f"🔹 HTTP_X_FORWARDED_FOR: {request.META.get('HTTP_X_FORWARDED_FOR', 'No proxy IP')}")
-    logger.info(f"🔹 CSRF Cookie: {request.COOKIES.get('csrftoken', 'NO CSRF COOKIE')[:20]}...")
-    logger.info(f"🔹 Session Key: {request.session.session_key[:10] if request.session.session_key else 'NO SESSION'}...")
-    logger.info(f"🔹 User authenticated: {request.user.is_authenticated}")
-    logger.info(f"🔹 User: {request.user.username if request.user.is_authenticated else 'Anonymous'}")
-    
-    if request.method == "POST":
-        logger.info(f"🔹 POST data keys: {list(request.POST.keys())}")
-        logger.info(f"🔹 CSRF token in POST: {'csrfmiddlewaretoken' in request.POST}")
+    try:
+        logger.info("=" * 50)
+        logger.info(f"🔹 REQUEST METHOD: {request.method}")
+        logger.info(f"🔹 REQUEST PATH: {request.path}")
+        logger.info(f"🔹 REQUEST ORIGIN: {request.META.get('HTTP_ORIGIN', 'No origin')}")
+        logger.info(f"🔹 REQUEST REFERER: {request.META.get('HTTP_REFERER', 'No referer')}")
+        logger.info(f"🔹 REMOTE_ADDR: {request.META.get('REMOTE_ADDR', 'No IP')}")
+        logger.info(f"🔹 HTTP_X_FORWARDED_FOR: {request.META.get('HTTP_X_FORWARDED_FOR', 'No proxy IP')}")
         
-        nombre = request.POST.get("nombCategory")
-        logger.info(f"🔹 Nombre de categoría: '{nombre}'")
+        # CSRF Cookie - más seguro
+        csrf_cookie = request.COOKIES.get('csrftoken', 'NO CSRF COOKIE')
+        csrf_display = csrf_cookie[:20] + '...' if len(csrf_cookie) > 20 else csrf_cookie
+        logger.info(f"🔹 CSRF Cookie: {csrf_display}")
         
-        if nombre:
-            try:
-                Category.objects.create(nombCategory=nombre)
-                logger.info(f"✅ Categoría '{nombre}' creada exitosamente")
-            except Exception as e:
-                logger.error(f"❌ Error al crear categoría: {str(e)}")
+        # Session Key - más seguro
+        session_key = request.session.session_key
+        session_display = session_key[:10] + '...' if session_key else 'NO SESSION'
+        logger.info(f"🔹 Session Key: {session_display}")
+        
+        logger.info(f"🔹 User authenticated: {request.user.is_authenticated}")
+        logger.info(f"🔹 User: {request.user.username if request.user.is_authenticated else 'Anonymous'}")
+        
+        if request.method == "POST":
+            logger.info(f"🔹 POST data keys: {list(request.POST.keys())}")
+            logger.info(f"🔹 CSRF token in POST: {'csrfmiddlewaretoken' in request.POST}")
+            
+            nombre = request.POST.get("nombCategory")
+            logger.info(f"🔹 Nombre de categoría: '{nombre}'")
+            
+            if nombre:
+                try:
+                    Category.objects.create(nombCategory=nombre)
+                    logger.info(f"✅ Categoría '{nombre}' creada exitosamente")
+                    messages.success(request, f"Categoría '{nombre}' agregada con éxito.")
+                except Exception as e:
+                    logger.error(f"❌ Error al crear categoría: {str(e)}")
+                    messages.error(request, "Error al crear la categoría.")
+            else:
+                logger.warning("⚠️ Nombre de categoría vacío o None")
+                messages.warning(request, "El nombre de la categoría no puede estar vacío.")
         else:
-            logger.warning("⚠️ Nombre de categoría vacío o None")
-    else:
-        logger.warning(f"⚠️ Método {request.method} no es POST")
+            logger.warning(f"⚠️ Método {request.method} no es POST")
+        
+        logger.info("=" * 50)
+        
+    except Exception as e:
+        logger.error(f"💥 ERROR CRÍTICO en agregar_categoria: {str(e)}")
+        logger.exception("Traceback completo:")
+        messages.error(request, "Error interno del servidor.")
     
-    logger.info("=" * 50)
     return redirect('productos:list_product')
-
 
 @admin_required
 def editar_categoria(request, id):
