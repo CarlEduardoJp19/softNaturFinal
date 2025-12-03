@@ -288,7 +288,7 @@ def agregar_categoria(request):
         logger.info(f"🔹 Session Key: {session_display}")
         
         logger.info(f"🔹 User authenticated: {request.user.is_authenticated}")
-        logger.info(f"🔹 User: {request.user.username if request.user.is_authenticated else 'Anonymous'}")
+        logger.info(f"🔹 User: {str(request.user) if request.user.is_authenticated else 'Anonymous'}")
         
         if request.method == "POST":
             logger.info(f"🔹 POST data keys: {list(request.POST.keys())}")
