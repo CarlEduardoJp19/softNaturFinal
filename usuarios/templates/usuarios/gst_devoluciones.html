@@ -3,16 +3,11 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'usuarios/css/devoluciones-usuarios.css' %}" />
 {% endblock %}
-
 {% block page_id %}devoluciones{% endblock %}
-
 {% block content %}
-
 <div class="contenedor-admin-devoluciones">
-    <h2 id="txt-gst">
-        Gestión de Devoluciones
-    </h2>
-
+    <h2 id="txt-gst">Gestión de Devoluciones</h2>
+    
     <div class="tabla-devoluciones">
         {% if devoluciones %}
         <table>
@@ -29,7 +24,6 @@
             </thead>
             <tbody>
                 {% for devolucion in devoluciones %}
-                <!-- 🟢 ID agregado para eliminar la fila con AJAX -->
                 <tr id="devolucion-{{ devolucion.id }}">
                     <td><strong>#{{ devolucion.id }}</strong></td>
                     <td>{{ devolucion.usuario.nombre }}</td>
@@ -41,8 +35,6 @@
                         SIN LOTE
                         {% endif %}
                     </td>
-
-
                     <td>{{ devolucion.fecha_solicitud|date:"d/m/Y" }}</td>
                     <td>
                         <span class="estado-badge estado-{{ devolucion.estado|lower }}">
@@ -51,22 +43,14 @@
                     </td>
                     <td>
                         <div class="botones-accion">
-
-                            <!-- Ver detalles -->
                             <button class="btn-ver" type="button" onclick="verDetalles('{{ devolucion.id }}')">
                                 <i class="fa fa-eye"></i> Ver
                             </button>
-
                             {% if devolucion.estado == 'Pendiente' %}
-                            <!-- 🟢 Botón AJAX de APROBAR -->
-                            <button type="button" class="btn-aprobar" data-action="aprobar"
-                                data-id="{{ devolucion.id }}">
+                            <button type="button" class="btn-aprobar" data-action="aprobar" data-id="{{ devolucion.id }}">
                                 <i class="fa fa-check"></i> Aprobar
                             </button>
-
-                            <!-- 🟢 Botón AJAX de RECHAZAR -->
-                            <button type="button" class="btn-rechazar" data-action="rechazar"
-                                data-id="{{ devolucion.id }}">
+                            <button type="button" class="btn-rechazar" data-action="rechazar" data-id="{{ devolucion.id }}">
                                 <i class="fa fa-times"></i> Rechazar
                             </button>
                             {% endif %}
@@ -85,7 +69,7 @@
     </div>
 </div>
 
-<!-- MODALES -->
+<!-- MODAL DETALLES -->
 <div class="modal-overlay" id="modalDetalles">
     <div class="modal-content">
         <div class="modal-header">
@@ -98,6 +82,45 @@
     </div>
 </div>
 
+<!-- ⭐ NUEVO MODAL PARA RECHAZAR CON MOTIVO -->
+<div class="modal-overlay" id="modalRechazar">
+    <div class="modal-content modal-rechazar">
+        <div class="modal-header">
+            <h3><i class="fa fa-exclamation-triangle"></i> Rechazar Devolución</h3>
+            <button class="btn-cerrar-modal" onclick="cerrarModalRechazo()">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="margin-bottom: 15px; color: #666;">
+                Por favor, indica el motivo por el cual estás rechazando esta devolución:
+            </p>
+            <form id="formRechazo">
+                <input type="hidden" id="devolucionIdRechazo" value="">
+                <div class="form-group">
+                    <label for="motivoRechazo">Motivo del rechazo: *</label>
+                    <textarea 
+                        id="motivoRechazo" 
+                        name="motivo_rechazo" 
+                        rows="5" 
+                        required
+                        placeholder="Ejemplo: El producto no presenta daños visibles según las fotos adjuntas..."
+                    ></textarea>
+                </div>
+                <div class="botones-modal">
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalRechazo()">
+                        <i class="fa fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn-confirmar-rechazo">
+                        <i class="fa fa-check"></i> Confirmar Rechazo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL IMAGEN -->
 <div class="modal-imagen" id="modalImagen">
     <button class="btn-cerrar-imagen" onclick="cerrarImagen()">
         <i class="fa fa-times"></i>
@@ -108,7 +131,6 @@
 <script id="datosJson" type="application/json">
     {{ devoluciones_json|safe }}
 </script>
-
 {% endblock %}
 
 {% block scripts %}

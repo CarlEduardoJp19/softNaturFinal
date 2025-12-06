@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             grupoProducto.style.display = 'none';
             grupoLote.style.display = 'none';
             selectProducto.innerHTML = '<option value="">-- Primero selecciona un pedido --</option>';
+            verificarFormulario(); // ⭐ Verificar estado del formulario
             return;
         }
 
@@ -34,16 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
         selectProducto.innerHTML = '<option value="">-- Selecciona el producto --</option>';
         productos.forEach(p => {
             const option = document.createElement('option');
-            // Formato: producto_id|item_id|lote_codigo
             option.value = `${p.producto_id}|${p.item_id}|${p.codigo_lote || ''}`;
-            // Guardar la unidad como data attribute
             option.setAttribute('data-unidad', p.unidad);
             option.textContent = `${p.producto_nombre} - Unidad ${p.unidad} - Lote ${p.codigo_lote || 'Sin lote'} - $${p.precio}`;
             selectProducto.appendChild(option);
         });
 
         grupoProducto.style.display = 'block';
-        grupoLote.style.display = 'none'; // Ocultar lote hasta seleccionar producto
+        grupoLote.style.display = 'none';
+        verificarFormulario(); // ⭐ Verificar estado del formulario
     }
     window.cargarProductos = cargarProductos;
 
@@ -58,15 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!selected || !selected.value) {
                 grupoLote.style.display = 'none';
                 textoLote.textContent = '';
+                verificarFormulario(); // ⭐ Verificar estado del formulario
                 return;
             }
 
-            // Parsear el formato: producto_id|item_id|lote_codigo
             const [productoId, itemId, lotecodigo] = selected.value.split('|');
-
             console.log('Producto seleccionado - Lote:', lotecodigo);
 
-            // Mostrar el lote
             if (lotecodigo && lotecodigo.trim() !== '') {
                 textoLote.textContent = lotecodigo;
                 grupoLote.style.display = 'block';
@@ -74,6 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 textoLote.textContent = 'Sin lote asignado';
                 grupoLote.style.display = 'block';
             }
+            
+            verificarFormulario(); // ⭐ Verificar estado del formulario
         });
     }
 
@@ -134,6 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarInputs();
         btnAbrirCamara.disabled = fotosCapturadas.length >= MAX_FOTOS;
         document.querySelector('.btn-archivo').disabled = fotosCapturadas.length >= MAX_FOTOS;
+        
+        verificarFormulario(); // ⭐ Verificar estado del formulario
     }
 
     function agregarFoto(file) {
@@ -149,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnAbrirCamara.addEventListener('click', async () => {
         if (fotosCapturadas.length >= MAX_FOTOS) {
-            mostrarAlerta('Ya has agregado 3 fotos (máximo permitido)');
+            mostrarAlerta('Límite de fotos', 'Ya has agregado 3 fotos (máximo permitido)');
             return;
         }
 
@@ -158,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             videoElement.srcObject = stream;
             modalCamara.classList.add('active');
         } catch (error) {
-            mostrarAlerta('Error al acceder a la cámara: ' + error.message);
+            mostrarAlerta('Error', 'Error al acceder a la cámara: ' + error.message);
         }
     });
 
@@ -172,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnCapturar.addEventListener('click', () => {
         if (fotosCapturadas.length >= MAX_FOTOS) {
-            mostrarAlerta('Ya has agregado 3 fotos');
+            mostrarAlerta('Límite de fotos', 'Ya has agregado 3 fotos');
             return;
         }
         canvasElement.width = videoElement.videoWidth;
@@ -196,21 +198,67 @@ document.addEventListener('DOMContentLoaded', () => {
         inputArchivo.value = '';
     });
 
-    // ====== ENVÍO DEL FORMULARIO ====== (CORREGIDO - UN SOLO EVENT LISTENER)
+    // ⭐⭐⭐ VERIFICAR ESTADO DEL FORMULARIO Y BLOQUEAR/DESBLOQUEAR BOTÓN ⭐⭐⭐
+    function verificarFormulario() {
+        const btnSubmit = document.querySelector('.btn-submit');
+        if (!btnSubmit) return;
+
+        const selectPedido = document.getElementById('selectPedido');
+        const selectProducto = document.getElementById('selectProducto');
+        const selectMotivo = document.getElementById('motivo');
+
+        // Verificar que todos los campos estén completos
+        const pedidoValido = selectPedido && selectPedido.value !== '';
+        const productoValido = selectProducto && selectProducto.value !== '';
+        const motivoValido = selectMotivo && selectMotivo.value !== '';
+        const fotosValidas = fotosCapturadas.length > 0; // Al menos 1 foto
+
+        // Habilitar o deshabilitar botón
+        if (pedidoValido && productoValido && motivoValido && fotosValidas) {
+            btnSubmit.disabled = false;
+            btnSubmit.classList.remove('btn-disabled');
+            btnSubmit.style.cursor = 'pointer';
+        } else {
+            btnSubmit.disabled = true;
+            btnSubmit.classList.add('btn-disabled');
+            btnSubmit.style.cursor = 'not-allowed';
+        }
+    }
+
+    // ⭐ Escuchar cambios en el select de motivo
+    const selectMotivo = document.getElementById('motivo');
+    if (selectMotivo) {
+        selectMotivo.addEventListener('change', verificarFormulario);
+    }
+
+    // ⭐ Verificar al cargar la página
+    verificarFormulario();
+
+    // ====== ENVÍO DEL FORMULARIO ======
     const formDevolucion = document.getElementById('formDevolucion');
     if (formDevolucion) {
         formDevolucion.addEventListener('submit', function (e) {
             e.preventDefault();
 
+            // Verificar una última vez antes de enviar
+            const selectPedido = document.getElementById('selectPedido');
+            const selectProducto = document.getElementById('selectProducto');
+            const selectMotivo = document.getElementById('motivo');
+
+            if (!selectPedido.value || !selectProducto.value || !selectMotivo.value || fotosCapturadas.length === 0) {
+                mostrarAlerta('Formulario incompleto', 'Por favor completa todos los campos obligatorios y agrega al menos 1 foto');
+                return;
+            }
+
             // 🔥 DESACTIVAR BOTÓN INMEDIATAMENTE
-            const btn = document.getElementById('btnEnviarDevolucion');
+            const btn = document.querySelector('.btn-submit');
             if (btn) {
                 btn.disabled = true;
+                btn.classList.add('btn-disabled');
                 btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Enviando...';
             }
 
             // Añadir la unidad al FormData
-            const selectProducto = document.getElementById('selectProducto');
             const selectedOption = selectProducto.options[selectProducto.selectedIndex];
             const unidad = selectedOption.getAttribute('data-unidad');
 
@@ -230,16 +278,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        mostrarAlerta(data.mensaje);
+                        mostrarAlerta('Éxito', data.mensaje);
+                        
                         // Quitar producto devuelto del select
-                        const valueToRemove = selectedOption.value;
                         if (selectedOption) selectedOption.remove();
 
                         // Quitar pedido si no quedan productos
                         const pedidoId = data.pedido_id;
                         const restantes = Array.from(selectProducto.options).filter(o => o.value !== "");
                         if (restantes.length === 0) {
-                            const selectPedido = document.getElementById('selectPedido');
                             const optionPedido = Array.from(selectPedido.options).find(o => parseInt(o.value) === pedidoId);
                             if (optionPedido) optionPedido.remove();
                             document.getElementById('grupoProducto').style.display = 'none';
@@ -250,33 +297,41 @@ document.addEventListener('DOMContentLoaded', () => {
                         formDevolucion.reset();
                         fotosCapturadas = [];
                         actualizarPreview();
-                        // Ocultar grupo de lote
                         document.getElementById('grupoLote').style.display = 'none';
 
                         // 🔥 REACTIVAR BOTÓN DESPUÉS DE ÉXITO
                         if (btn) {
                             btn.disabled = false;
+                            btn.classList.remove('btn-disabled');
                             btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar Solicitud de Devolución';
                         }
+                        
+                        verificarFormulario(); // ⭐ Verificar de nuevo
                     } else {
-                        mostrarAlerta(data.mensaje);
+                        mostrarAlerta('Error', data.mensaje);
                         
                         // 🔥 REACTIVAR BOTÓN EN CASO DE ERROR
                         if (btn) {
                             btn.disabled = false;
+                            btn.classList.remove('btn-disabled');
                             btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar Solicitud de Devolución';
                         }
+                        
+                        verificarFormulario(); // ⭐ Verificar de nuevo
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    mostrarAlerta('Ocurrió un error al enviar la devolución');
+                    mostrarAlerta('Error', 'Ocurrió un error al enviar la devolución');
                     
                     // 🔥 REACTIVAR BOTÓN EN CASO DE ERROR DE RED
                     if (btn) {
                         btn.disabled = false;
+                        btn.classList.remove('btn-disabled');
                         btn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar Solicitud de Devolución';
                     }
+                    
+                    verificarFormulario(); // ⭐ Verificar de nuevo
                 });
         });
     }

@@ -4,27 +4,71 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'productos/css/estilos.css' %}" />
+<link rel="stylesheet" href="{% static 'productos/css/producto.css' %}" />
 {% endblock %}
 
 {% block content %}
 <section class="Productos">
     {% for product in products %}
-    <div class="container-produc">
-        <div class="container-principal">
-            <img class="img-produc" src="{{product.imgProduc.url}}">
-            <div class="container-info">
-                <h4 class="name-produc">{{product.nombProduc}}</h4>
-                <h5 class="price-produc">${{product.precio|floatformat:0|intcomma }}</h5>
-                <p class="desc-produc">{{product.descripcion}}</p>
-                {% if user.is_authenticated %}
-                <a href="{% url 'productos:agregar' product.id %}" class="btn-comprar">Agregar</a>
-                {% else %}
-                <a href="{% url 'usuarios:login' %}?next={% url 'productos:agregar' product.id %}"
-                    class="btn-comprar">Agregar</a>
-                {% endif %}
-            </div>
+    <div class="card-producto">
+        <!-- Imagen con badge -->
+        <div class="img-wrapper">
+            <img class="img-produc" src="{{product.imgProduc.url}}" alt="{{ product.nombProduc }}">
+            <!-- ⭐ Badge AGOTADO (SOLO si stock es 0) -->
+            {% if product.stock_total == 0 or product.stock_total == None %}
+            <span class="badge-agotado">
+                <i class="fa fa-ban"></i> AGOTADO
+            </span>
+            {% endif %}
+        </div>
+        
+        <!-- Información del producto -->
+        <div class="producto-info">
+            <h3 class="nombre-producto">{{product.nombProduc}}</h3>
+            <p class="precio-producto">${{product.precio|floatformat:0|intcomma}}</p>
+            <p class="descripcion-producto">{{product.descripcion}}</p>
+            
+            <!-- ⭐ Botón SIEMPRE habilitado -->
+            {% if user.is_authenticated %}
+            <a href="{% url 'productos:agregar' product.id %}" class="btn-comprar">
+                <i class="fa fa-cart-plus"></i> Agregar
+            </a>
+            {% else %}
+            <a href="{% url 'usuarios:login' %}?next={% url 'productos:agregar' product.id %}" class="btn-comprar">
+                <i class="fa fa-cart-plus"></i> Agregar
+            </a>
+            {% endif %}
         </div>
     </div>
+    {% empty %}
+        <!-- MENSAJE CUANDO NO EXISTE EL PRODUCTO -->
+        <div class="no-resultados">
+            <h3>No se encontraron resultados</h3>
+            <p>El producto que buscas no existe o no está disponible.</p>
+        </div>
     {% endfor %}
 </section>
+
+<!-- ⭐ MODAL DE NOTIFICACIÓN -->
+<div id="modalNotificacion" class="modal-overlay">
+    <div class="modal-content">
+        <h2>Producto Agotado</h2>
+        <p id="mensajeModal">Lo sentimos, este producto está agotado temporalmente</p>
+        <button class="btn-aceptar" onclick="cerrarModal()">Aceptar</button>
+    </div>
+</div>
+
+<!-- ⭐ MODAL DE STOCK MÁXIMO -->
+<div id="modalStockMaximo" class="modal-overlay">
+    <div class="modal-content">
+        <h2>Stock Máximo</h2>
+        <p id="mensajeStockMaximo">Ya tienes todo el stock disponible en tu carrito</p>
+        <button class="btn-aceptar" onclick="cerrarModalStock()">Aceptar</button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'productos/js/producto.js' %}"></script>
 {% endblock %}

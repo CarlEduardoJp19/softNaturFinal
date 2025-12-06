@@ -33,21 +33,26 @@
 </section>
 
 <section class="container-infoNosotros">
+  <h3 id="txt-big" style="text-align: center">Acerca de Nosotros</h3>
   <div class="container-nosotros">
-    <h3 id="txt-big" style="text-align: center">Acerca de Nosotros</h3>
     <p id="txt-nosotros">
       Somos una empresa colombiana ubicada en Ibagué, con más de 23 años
       ofreciendo productos naturales que mejoran la calidad de vida de nuestros
       clientes. Todos nuestros productos cuentan con registro INVIMA.
     </p>
 
-    <div style="text-align: center; margin-top: 20px">
+    {% comment %} <div style="text-align: center; margin-top: 20px">
       <a href="{% url 'usuarios:nosotros' %}" class="btn-leer-mas">Leer más</a>
-    </div>
+    </div> {% endcomment %}
   </div>
 
   <div class="container-bloquesTres">
     <div class="bloques">
+      <div class="iconos-bloques">
+        <svg width="80" height="70" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8Zm1-13h-2v5l4.25 2.52 1-1.74L13 11.15Z"/>
+        </svg>
+      </div>
       <h3>Misión</h3>
       <p>
         Somos una empresa líder en la comercialización de productos naturales.
@@ -58,6 +63,11 @@
     </div>
 
     <div class="bloques">
+      <div class="iconos-bloques">
+          <svg width="80" height="70" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5c-4.97 0-9.16 3.06-11 7 1.84 3.94 6.03 7 11 7s9.16-3.06 11-7c-1.84-3.94-6.03-7-11-7zm0 12c-2.76 0-5-2.25-5-5s2.24-5 5-5 5 2.25 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.37-3 3s1.34 3 3 3 3-1.37 3-3-1.34-3-3-3z"/>
+          </svg>
+      </div>
       <h3>Visión</h3>
       <p>Buscamos impactar al mundo con tratamientos naturales.</p>
       <a href="{% url 'usuarios:nosotros' %}#vision" class="btn-leer-mas"
@@ -66,6 +76,11 @@
     </div>
 
     <div class="bloques">
+      <div class="iconos-bloques">
+          <svg width="80" height="70" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5.35c1.2-1.48 3.4-1.68 4.92-.41 1.74 1.46 1.88 4.05.32 5.66l-4.6 4.73a.75.75 0 0 1-1.08 0l-4.6-4.73c-1.56-1.61-1.42-4.2.32-5.66 1.52-1.27 3.72-1.07 4.92.41zM5 15a2 2 0 0 0 2 2h1v1a2 2 0 1 0 4 0v-1h1a2 2 0 0 0 2-2v-1.09l-2.18 2.24a2.75 2.75 0 0 1-3.94 0L5 13.91V15z"/>
+          </svg>
+      </div>
       <h3>Valores</h3>
       <p>Responsabilidad, honestidad y compromiso.</p>
       <a href="{% url 'usuarios:nosotros' %}#valor" class="btn-leer-mas"
@@ -102,6 +117,7 @@
         alt="{{ producto.nombProduc }}"
       />
       <p>{{ producto.nombProduc }}</p>
+      <p>${{ producto.precio }}</p>
       <a href="{% url 'productos:detalle' pk=producto.id %}" class="btn-prod"
         >Leer más</a
       >

@@ -183,6 +183,7 @@ h2 {
         opacity: 0;
         transform: scale(0.85);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -497,11 +498,13 @@ h2 {
         opacity: 0;
         transform: scale(0.85);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
     }
 }
+
 /* 🔹 Celulares muy pequeños (menos de 360px) */
 @media (max-width: 360px) {
     .alert-box {
@@ -596,6 +599,7 @@ h2 {
         font-size: 22px;
     }
 }
+
 /* ========================= */
 /* 🔹 DEVOLUCIONES — RESPONSIVE */
 /* ========================= */
@@ -655,6 +659,7 @@ h2 {
 /* ========================= */
 
 @media (max-width: 600px) {
+
     .form-group select,
     .form-group textarea {
         font-size: 0.9rem;
@@ -740,6 +745,7 @@ h2 {
         text-align: center;
     }
 }
+
 /* ========================= */
 /* 🔹 Resolución específica: 1024 x 600 */
 /* ========================= */
@@ -830,15 +836,16 @@ h2 {
         font-size: 0.9rem;
     }
 }
+
 /* ========================= */
 /* 🔹 Resolución compacta: 783 x 1033 */
 /* ========================= */
 
-@media (min-width: 760px) and (max-width: 800px)
-    and (min-height: 1000px) and (max-height: 1100px) {
+@media (min-width: 760px) and (max-width: 800px) and (min-height: 1000px) and (max-height: 1100px) {
 
     /* 🔹 Evita scroll horizontal global */
-    body, html {
+    body,
+    html {
         overflow-x: hidden;
     }
 
@@ -864,7 +871,8 @@ h2 {
     .tab-btn {
         padding: 8px 16px;
         font-size: 0.9rem;
-        white-space: nowrap; /* evita crecer hacia los lados */
+        white-space: nowrap;
+        /* evita crecer hacia los lados */
     }
 
     /* Lista de devoluciones compacta */
@@ -916,4 +924,142 @@ h2 {
     .video-container {
         max-height: 280px;
     }
+}
+
+/* ============================================
+   MOTIVO DE RECHAZO EN LISTA DE DEVOLUCIONES
+   ============================================ */
+
+.motivo-rechazo-usuario {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+    border-left: 4px solid #dc3545;
+    padding: 12px 15px;
+    margin-top: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.1);
+    animation: slideDown 0.4s ease-out;
+}
+
+.motivo-rechazo-usuario i {
+    color: #dc3545;
+    margin-right: 8px;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.motivo-rechazo-usuario strong {
+    color: #dc3545;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.motivo-rechazo-usuario p {
+    color: #721c24;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    padding-left: 24px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ajustar el contenedor de devolución para dar espacio */
+.devolucion-item {
+    padding: 20px;
+    margin-bottom: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.devolucion-info {
+    flex: 1;
+}
+
+/* Badge de estado */
+.estado {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.estado.pendiente {
+    background: #ffc107;
+    color: #000;
+}
+
+.estado.aprobada {
+    background: #28a745;
+    color: white;
+}
+
+.estado.rechazada {
+    background: #dc3545;
+    color: white;
+}
+
+/* ============================================
+   BOTÓN DE ENVÍO DESHABILITADO
+   ============================================ */
+
+.btn-submit {
+    transition: all 0.3s ease;
+}
+
+.btn-submit.btn-disabled,
+.btn-submit:disabled {
+    background: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+    transform: none !important;
+}
+
+.btn-submit.btn-disabled:hover,
+.btn-submit:disabled:hover {
+    background: #ccc !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Tooltip explicativo cuando está deshabilitado */
+.btn-submit:disabled::after {
+    content: "Completa todos los campos y agrega al menos 1 foto";
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.btn-submit:disabled:hover::after {
+    opacity: 1;
 }

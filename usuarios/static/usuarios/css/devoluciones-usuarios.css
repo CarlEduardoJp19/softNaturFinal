@@ -501,6 +501,75 @@ tbody td {
   flex-wrap: wrap;
 }
 
+/* ⭐ ESTILOS PARA EL MODAL DE RECHAZO */
+.modal-rechazar {
+  max-width: 600px;
+}
+
+.modal-rechazar .form-group {
+  margin-bottom: 20px;
+}
+
+.modal-rechazar label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-rechazar textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+.modal-rechazar textarea:focus {
+  outline: none;
+  border-color: #dc3545;
+}
+
+.botones-modal {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-cancelar {
+  padding: 10px 20px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.btn-cancelar:hover {
+  background: #5a6268;
+}
+
+.btn-confirmar-rechazo {
+  padding: 10px 20px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.btn-confirmar-rechazo:hover {
+  background: #c82333;
+}
 /* ========================================= */
 /* MEDIA QUERIES RESPONSIVE */
 /* ========================================= */

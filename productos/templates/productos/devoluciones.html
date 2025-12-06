@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block styles %}
-<link rel="stylesheet" href="{% static 'productos/css/estilos.css' %}?v={{ timestamp }}" />
+<link rel="stylesheet" href="{% static 'productos/css/estilos.css' %}">
 <link rel="stylesheet" href="{% static 'productos/css/devoluciones.css' %}?v={{ timestamp }}" />
 {% endblock %}
 
@@ -26,9 +26,19 @@
             {% for devolucion in devoluciones %}
             <li class="devolucion-item">
                 <div class="devolucion-info">
-                    <strong>Devolución #{{ devolucion.id }}</strong><br>Producto: {{ devolucion.producto.nombProduc }}<br>
+                    <strong>Devolución #{{ devolucion.id }}</strong><br>
+                    Producto: {{ devolucion.producto.nombProduc }}<br>
                     Fecha: {{ devolucion.fecha_solicitud|date:"d M Y" }}<br>
                     Motivo: {{ devolucion.motivo|truncatewords:10 }}
+
+                    <!-- ⭐ MOSTRAR MOTIVO DE RECHAZO -->
+                    {% if devolucion.estado == 'Rechazada' and devolucion.motivo_rechazo %}
+                    <div class="motivo-rechazo-usuario">
+                        <i class="fa fa-exclamation-circle"></i>
+                        <strong>Motivo del rechazo:</strong>
+                        <p>{{ devolucion.motivo_rechazo }}</p>
+                    </div>
+                    {% endif %}
                 </div>
                 <div>
                     <span class="estado {{ devolucion.estado|lower }}">
@@ -57,15 +67,12 @@
                     <option value="">-- Selecciona un pedido --</option>
                     {% for pedido in pedidos_agrupados %}
                     <option value="{{ pedido.pedido_id }}">
-                        Pedido #{{ pedido.pedido_id }} - {{ pedido.fecha_pedido }} 
-                        ({{ pedido.cantidad_productos }} producto{% if pedido.cantidad_productos > 1 %}s{% endif %})
-                        {% if pedido.dias_restantes <= 3 %}
-                            <span style="color: red;">⚠️ {{ pedido.dias_restantes }} día{% if pedido.dias_restantes > 1 %}s{% endif %} restante{% if pedido.dias_restantes > 1 %}s{% endif %}</span>
-                        {% else %}
-                            - {{ pedido.dias_restantes }} días para devolver
-                        {% endif %}
-                    </option>
-                    {% endfor %}
+                        Pedido #{{ pedido.pedido_id }} - {{ pedido.fecha_pedido }}
+                        ({{ pedido.cantidad_productos }} producto{{ pedido.cantidad_productos|pluralize }})
+                        {% if pedido.dias_restantes <= 3 %} ⚠️ URGENTE: {{ pedido.dias_restantes }} día{{
+                            pedido.dias_restantes|pluralize }} restante{{ pedido.dias_restantes|pluralize }} {% else %}
+                            - {{ pedido.dias_restantes }} días para devolver {% endif %} </option>
+                            {% endfor %}
                 </select>
                 <small style="color: #666; display: block; margin-top: 5px;">
                     <i class="fa fa-info-circle"></i> Tienes 10 días desde la entrega para solicitar devoluciones
@@ -82,7 +89,8 @@
             <!-- GRUPO LOTE -->
             <div class="form-group" id="grupoLote" style="display:none; margin-top:10px;">
                 <label><i class="fa fa-tag"></i> Lote del producto:</label>
-                <p id="textoLote" class="lote-info" style="background: #f0f0f0; padding: 10px; border-radius: 5px; margin: 5px 0;"></p>
+                <p id="textoLote" class="lote-info"
+                    style="background: #f0f0f0; padding: 10px; border-radius: 5px; margin: 5px 0;"></p>
             </div>
 
             <div class="form-group">
@@ -176,19 +184,19 @@
 
 <!-- DEBUG: Verificar que los productos tienen lote -->
 <script>
-console.log('=== DEBUG PRODUCTOS ===');
-const productos = JSON.parse(document.getElementById('productosData').textContent);
-console.log('Total productos:', productos.length);
-productos.forEach((p, i) => {
-    if (i < 3) { // Mostrar solo los primeros 3
-        console.log(`Producto ${i}:`, {
-            nombre: p.producto_nombre,
-            lote: p.lote,
-            codigo_lote: p.codigo_lote,
-            unidad: p.unidad
-        });
-    }
-});
+    console.log('=== DEBUG PRODUCTOS ===');
+    const productos = JSON.parse(document.getElementById('productosData').textContent);
+    console.log('Total productos:', productos.length);
+    productos.forEach((p, i) => {
+        if (i < 3) { // Mostrar solo los primeros 3
+            console.log(`Producto ${i}:`, {
+                nombre: p.producto_nombre,
+                lote: p.lote,
+                codigo_lote: p.codigo_lote,
+                unidad: p.unidad
+            });
+        }
+    });
 </script>
 
 {% endblock %}
@@ -206,12 +214,12 @@ productos.forEach((p, i) => {
     </div>
 </div>
 {% if messages %}
-    {% for msg in messages %}
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                mostrarAlerta("Notificación", "{{ msg }}");
-            });
-        </script>
-    {% endfor %}
+{% for msg in messages %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        mostrarAlerta("Notificación", "{{ msg }}");
+    });
+</script>
+{% endfor %}
 {% endif %}
 {% endblock %}

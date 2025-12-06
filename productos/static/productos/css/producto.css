@@ -1,0 +1,263 @@
+/* ============================================
+   PRODUCTOS - BOTÓN SIEMPRE ACTIVO
+   ============================================ */
+
+.Productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(430px, 300px));
+    gap: 30px;
+    padding: 40px 20px;
+    max-width: 1900px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.card-producto {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-producto:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.img-wrapper {
+    position: relative;
+    padding: 20px;
+    overflow: visible;
+}
+
+.img-produc {
+    width: 100%;
+    height: 320px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+
+
+/* Badge AGOTADO - Solo aparece cuando stock = 0 */
+.badge-agotado {
+    position: absolute;
+    top: 5px;
+    background: #d62828;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.5);
+    z-index: 10;
+}
+
+.badge-agotado i {
+    margin-right: 6px;
+    font-size: 13px;
+}
+
+.producto-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.nombre-producto {
+    font-size: 25px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    line-height: 1.3;
+    min-height: 52px;
+    text-align: center;
+}
+
+.precio-producto {
+    font-size: 24px;
+    font-weight: 800;
+    color: balck;
+    margin: 0;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.descripcion-producto {
+    font-size: 17px;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+/* Botón comprar - SIEMPRE activo */
+.btn-comprar {
+    gap: 8px;
+    margin-left: 0 auto;
+    padding: 14px 28px;
+    background: #F27405;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(165, 167, 40, 0.3);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-comprar:hover {
+    transform: translateY(-3px);
+    background: #F2C641;
+    color: #292929;
+}
+
+.btn-comprar i {
+    font-size: 18px;
+}
+
+/* Estilos del modal */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.btn-aceptar {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-aceptar:hover {
+    background-color: #ec971f;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1200px) {
+    .Productos {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+        gap: 25px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .Productos {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .Productos {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 20px 15px;
+    }
+
+    .img-produc {
+        height: 220px;
+    }
+
+    .nombre-producto {
+        font-size: 18px;
+        min-height: auto;
+    }
+
+    .precio-producto {
+        font-size: 22px;
+    }
+
+    .descripcion-producto {
+        font-size: 13px;
+    }
+
+    .btn-comprar {
+        font-size: 14px;
+        padding: 12px 20px;
+    }
+
+    .badge-agotado {
+        padding: 6px 12px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .Productos {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px 10px;
+    }
+
+    .img-produc {
+        height: 240px;
+    }
+
+    .producto-info {
+        padding: 15px;
+    }
+
+    .nombre-producto {
+        font-size: 17px;
+    }
+
+    .precio-producto {
+        font-size: 22px;
+    }
+
+    .btn-comprar {
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+}

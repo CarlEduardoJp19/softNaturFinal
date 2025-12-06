@@ -41,7 +41,7 @@ Hola {instance.usuario.nombre},
 
 Tu solicitud de devolución del producto "{instance.producto.nombProduc}" ha sido RECHAZADA.
 
-Si crees que hubo un error, puedes comunicarte con nuestro soporte.
+Si crees que hubo un error, puedes comunicarte con nuestro soporte con nuestro número 3124824262.
 
 Equipo Unidos Pensando en su Salud.
 """

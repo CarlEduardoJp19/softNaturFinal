@@ -27,7 +27,8 @@ body {
     letter-spacing: 0.8px;
 }
 
-.select-filtro {
+.select-filtro,
+.select-filter-ventas{
     padding: 10px 16px;
     border-radius: 8px;
     font-size: 14px;
@@ -37,14 +38,15 @@ body {
     cursor: pointer;
 }
 
-.select-filtro:focus {
-    border-color: #7aa8ff;
-    box-shadow: 0 0 6px rgba(122, 168, 255, 0.4);
+.select-filtro,
+.select-filter-ventas:focus {
+    border-color: #efce74;
+    box-shadow: 0 0 6px rgba(222, 189, 69, 0.4);
 }
 
 .btn-filtro {
     background: #E5BE01;
-    color: white;
+    color: #292929;
     border: none;
     padding: 10px 18px;
     border-radius: 8px;
@@ -63,6 +65,29 @@ body {
     transform: scale(0.97);
 }
 
+.btn-excel {
+    background: #E5BE01;
+    color: #292929;
+    border: none;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-excel:hover {
+    background: #F29727;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 190, 1, 0.3);
+}
 
 /* ====== Sidebar ====== */
 .sidebar {

@@ -1,3 +1,4 @@
+
 /*******************************************
  *  GESTIÓN DE DEVOLUCIONES (ADMIN + AJAX)
  *******************************************/
@@ -117,6 +118,19 @@ if (page) {
         document.getElementById("modalImagen").classList.remove("active");
     };
 
+    /*****************************
+     *  MODAL DE RECHAZO
+     *****************************/
+    window.abrirModalRechazo = function(devolucionId) {
+        document.getElementById('devolucionIdRechazo').value = devolucionId;
+        document.getElementById('motivoRechazo').value = '';
+        document.getElementById('modalRechazar').classList.add('active');
+    };
+
+    window.cerrarModalRechazo = function() {
+        document.getElementById('modalRechazar').classList.remove('active');
+    };
+
     /****************************************
      *   DELEGACIÓN PARA APROBAR / RECHAZAR
      ****************************************/
@@ -127,22 +141,45 @@ if (page) {
         const accion = btn.dataset.action;
         const id = parseInt(btn.dataset.id);
 
-        enviarAccionAjax(id, accion);
+        // ⭐ Si es RECHAZAR, abrir el modal
+        if (accion === "rechazar") {
+            cerrarModal(); // Cerrar modal de detalles
+            abrirModalRechazo(id);
+        } 
+        // ⭐ Si es APROBAR, ejecutar DIRECTAMENTE sin confirmación
+        else if (accion === "aprobar") {
+            enviarAccionAjax(id, accion);
+        }
     });
 
     /****************************************
-     *   FUNCIÓN AJAX
+     *   ENVIAR FORMULARIO DE RECHAZO
+     ****************************************/
+    document.getElementById('formRechazo')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const devolucionId = document.getElementById('devolucionIdRechazo').value;
+        const motivoRechazo = document.getElementById('motivoRechazo').value.trim();
+
+        if (!motivoRechazo) {
+            mostrarNotificacion('Debes escribir un motivo de rechazo');
+            return;
+        }
+
+        // ⭐ Enviar como JSON (no FormData)
+        enviarRechazoConMotivo(devolucionId, motivoRechazo);
+    });
+
+    /****************************************
+     *   FUNCIÓN AJAX PARA APROBAR
      ****************************************/
     function enviarAccionAjax(id, tipo) {
-        const url =
-            tipo === "aprobar"
-                ? `/usuarios/aprobar-devolucion/${id}/`
-                : `/usuarios/rechazar-devolucion/${id}/`;
+        const url = `/usuarios/aprobar-devolucion/${id}/`;
 
         fetch(url, {
             method: "POST",
             headers: {
-                "X-CSRFToken": CSRF_TOKEN,
+                "X-CSRFToken": getCookie('csrftoken'),
                 "X-Requested-With": "XMLHttpRequest",
                 "Content-Type": "application/json",
             },
@@ -151,26 +188,134 @@ if (page) {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
+                    // ⭐ SIN alert de éxito, solo actualizar la UI
                     const fila = document.getElementById(`devolucion-${id}`);
-                    if (fila) fila.remove();
+                    if (fila) {
+                        const badge = fila.querySelector('.estado-badge');
+                        badge.textContent = 'Aprobada';
+                        badge.className = 'estado-badge estado-aprobada';
+                        
+                        const btnContainer = fila.querySelector('.botones-accion');
+                        btnContainer.querySelectorAll('.btn-aprobar, .btn-rechazar').forEach(b => b.remove());
+                    }
 
                     cerrarModal();
+                    
+                    // Opcional: Mostrar un mensaje sutil en lugar de alert
+                    mostrarNotificacion('Devolución aprobada correctamente', 'success');
                 } else {
-                    alert("Error: " + data.error);
+                    mostrarNotificacion("Error: " + (data.error || 'No se pudo aprobar'), 'error');
                 }
             })
-            .catch(err => console.error("Error en AJAX:", err));
+            .catch(err => {
+                console.error("Error en AJAX:", err);
+                mostrarNotificacion('Error al procesar la solicitud', 'error');
+            });
     }
-    function exportarDevolucionesExcel() {
-    const estado = document.getElementById('estadoFilter')?.value || '';
-    window.location.href = `{% url 'usuarios:exportar_devoluciones_excel' %}?estado=${estado}`;
-}
+
+    /****************************************
+     *   FUNCIÓN AJAX PARA RECHAZAR CON MOTIVO
+     *   ⭐ AHORA ENVÍA JSON EN LUGAR DE FORMDATA
+     ****************************************/
+    function enviarRechazoConMotivo(id, motivo) {
+        const url = `/usuarios/rechazar-devolucion/${id}/`;
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken'),
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/json",  // ⭐ Cambio importante
+            },
+            body: JSON.stringify({
+                motivo_rechazo: motivo  // ⭐ Enviar como JSON
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    // ⭐ SIN alert de éxito
+                    cerrarModalRechazo();
+                    
+                    const fila = document.getElementById(`devolucion-${id}`);
+                    if (fila) {
+                        const badge = fila.querySelector('.estado-badge');
+                        badge.textContent = 'Rechazada';
+                        badge.className = 'estado-badge estado-rechazada';
+                        
+                        const btnContainer = fila.querySelector('.botones-accion');
+                        btnContainer.querySelectorAll('.btn-aprobar, .btn-rechazar').forEach(b => b.remove());
+                    }
+                    
+                    // Opcional: Mostrar un mensaje sutil
+                    mostrarNotificacion('Devolución rechazada correctamente', 'error');
+                } else {
+                    mostrarNotificacion("Error: " + (data.error || 'No se pudo rechazar'), 'error');
+                }
+            })
+            .catch(err => {
+                console.error("Error en AJAX:", err);
+                mostrarNotificacion('Error al procesar la solicitud', 'error');
+            });
+    }
+
+    /****************************************
+     *   NOTIFICACIÓN SUTIL (OPCIONAL)
+     *   Sistema de mensajes no intrusivo
+     ****************************************/
+    function mostrarNotificacion(mensaje, tipo = 'success') {
+        // Crear elemento de notificación
+        const notif = document.createElement('div');
+        notif.className = `notificacion notificacion-${tipo}`;
+        notif.textContent = mensaje;
+        notif.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: ${tipo === 'success' ? '#10b981' : '#ef4444'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+        `;
+        
+        document.body.appendChild(notif);
+        
+        // Remover después de 3 segundos
+        setTimeout(() => {
+            notif.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notif.remove(), 300);
+        }, 3000);
+    }
+
+    /****************************************
+     *   EXPORTAR A EXCEL
+     ****************************************/
+    window.exportarDevolucionesExcel = function() {
+        const estado = document.getElementById('estadoFilter')?.value || '';
+        window.location.href = `/usuarios/exportar-devoluciones-excel/?estado=${estado}`;
+    }
+
+    /****************************************
+     *   OBTENER COOKIE CSRF
+     ****************************************/
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 } // Fin devoluciones
-
-
-
-
-
 
 /*********************************************
  *  GESTIÓN DE USUARIOS (Código original)

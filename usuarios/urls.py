@@ -36,6 +36,7 @@ urlpatterns = [
 
     # ==================== PANEL Y GESTIÓN (ADMIN) ====================
     path('dashboard/', dashboard_views.dashboard, name="dashboard"),
+    path('dashboard/exportar-excel/', exportacion_views.exportar_dashboard_excel, name='exportar_dashboard_excel'),
     path('gstUsuarios/', admin_views.gstUsuarios, name="gstUsuarios"),
     path('', admin_views.gstUsuarios, name='gstUsuarios'),  # Ruta raíz
 

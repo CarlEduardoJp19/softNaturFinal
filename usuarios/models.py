@@ -119,9 +119,8 @@ class Devolucion(models.Model):
     item = models.ForeignKey(PedidoItem, on_delete=models.CASCADE, related_name='devoluciones', null=True, blank=True)
     seleccionada = models.BooleanField(default=False, verbose_name='Seleccionada por el usuario')
     lote = models.ForeignKey(Lote, null=True, blank=True, on_delete=models.SET_NULL)
+    motivo_rechazo = models.TextField(null=True, blank=True, verbose_name='Motivo de rechazo por admin')
 
-
-    
     class Meta:
         verbose_name = 'Devolución'
         verbose_name_plural = 'Devoluciones'

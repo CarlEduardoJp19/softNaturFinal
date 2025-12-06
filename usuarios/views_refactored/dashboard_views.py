@@ -9,7 +9,9 @@ from productos.models import Producto
 
 @admin_required
 def dashboard(request):
-    tiempo = request.GET.get("tiempo")  # semana, mes, anio, o vacío
+    mes_especifico = request.GET.get("mes_especifico", "")
+    anio_especifico = request.GET.get("anio_especifico", "")
+    
     hoy = timezone.now()
 
     # Base: solo datos desde 2025
@@ -18,26 +20,25 @@ def dashboard(request):
         fecha_creacion__year__gte=2025
     )
 
-    # FILTRO DE TIEMPO
-    if tiempo == "semana":
-        inicio_semana = hoy - timezone.timedelta(days=hoy.weekday())
-        pedidos = pedidos.filter(fecha_creacion__gte=inicio_semana)
+    # Base para devoluciones con el mismo filtro de fecha
+    devoluciones = Devolucion.objects.filter(
+        fecha_solicitud__year__gte=2025
+    )
 
-    elif tiempo == "mes":
-        pedidos = pedidos.filter(
-            fecha_creacion__year=hoy.year,
-            fecha_creacion__month=hoy.month
-        )
+    # FILTROS ESPECÍFICOS
+    if mes_especifico:
+        pedidos = pedidos.filter(fecha_creacion__month=int(mes_especifico))
+        devoluciones = devoluciones.filter(fecha_solicitud__month=int(mes_especifico))
+    
+    if anio_especifico:
+        pedidos = pedidos.filter(fecha_creacion__year=int(anio_especifico))
+        devoluciones = devoluciones.filter(fecha_solicitud__year=int(anio_especifico))
 
-    elif tiempo == "anio":
-        pedidos = pedidos.filter(
-            fecha_creacion__year=hoy.year
-        )
-
+    # TOTALES FILTRADOS
     total_ventas = pedidos.aggregate(total=Sum("total"))["total"] or 0
-
     total_pedidos = pedidos.count()
 
+    # Productos filtrados por los pedidos filtrados
     prod_info = (
         Producto.objects
         .annotate(
@@ -49,8 +50,14 @@ def dashboard(request):
         .filter(total_vendidos__gt=0)
         .order_by("-total_vendidos")
     )
+    
+    # Total de productos: si no hay filtros, mostrar todos los productos
+    if not mes_especifico and not anio_especifico:
+        total_productos = Producto.objects.count()
+    else:
+        total_productos = prod_info.count()
 
-    # Usuarios con más compras
+    # Usuarios con compras en el período filtrado
     usuarios_info = (
         Usuario.objects
         .annotate(
@@ -62,7 +69,14 @@ def dashboard(request):
         .filter(pedidos_pagados__gt=0)
         .order_by("-pedidos_pagados")
     )
+    
+    # Total de usuarios: si no hay filtros, mostrar todos los usuarios
+    if not mes_especifico and not anio_especifico:
+        total_usuarios = Usuario.objects.count()
+    else:
+        total_usuarios = usuarios_info.count()
 
+    # Ventas por mes (con los pedidos ya filtrados)
     ventas_info = (
         pedidos.annotate(mes=TruncMonth("fecha_creacion"))
         .values("mes")
@@ -73,6 +87,7 @@ def dashboard(request):
         (v["mes"].strftime("%B"), v["total"]) for v in ventas_info
     ]
 
+    # Estado de pedidos (con los pedidos ya filtrados)
     estado_info = (
         pedidos.values("estado")
         .annotate(total=Count("id"))
@@ -80,13 +95,8 @@ def dashboard(request):
     )
     estado_info = [(e["estado"], e["total"]) for e in estado_info]
 
-    ultimas_devoluciones = (
-        Devolucion.objects.order_by('-fecha_solicitud')[:5]
-    )
-
-    # Totales generales (no dependen del filtro)
-    total_productos = Producto.objects.count()
-    total_usuarios = Usuario.objects.count()
+    # Últimas 5 devoluciones (con el filtro aplicado)
+    ultimas_devoluciones = devoluciones.order_by('-fecha_solicitud')[:5]
 
     return render(request, "usuarios/dashboard.html", {
         "prod_info": prod_info,

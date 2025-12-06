@@ -8,35 +8,30 @@ def agregarAlCarrito(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     carrito = request.session.get("carrito", {})
     producto_id_str = str(producto.id)
-
+    
     # Buscar el lote más cercano a vencer
     lote = Lote.objects.filter(
         producto=producto,
         cantidad__gt=0
     ).order_by('fecha_caducidad').first()
-
-    # 🔍 DEBUG DETALLADO
-    print("=" * 50)
-    print(f"PRODUCTO: {producto.id} - {producto.nombProduc}")
-    print(f"LOTE ENCONTRADO: {lote}")
-    if lote:
-        print(f"  → codigo_lote: {lote.codigo_lote}")
-        print(f"  → cantidad: {lote.cantidad}")
-        print(f"  → producto_id del lote: {lote.producto_id}")
-    else:
-        print("  → ❌ NO SE ENCONTRÓ NINGÚN LOTE")
-        
-        # Ver qué lotes existen para este producto
-        todos_lotes = Lote.objects.filter(producto=producto)
-        print(f"  → Lotes totales para este producto: {todos_lotes.count()}")
-        for l in todos_lotes:
-            print(f"     - {l.codigo_lote}, cantidad: {l.cantidad}")
-    print("=" * 50)
-
+    
     lote_codigo = lote.codigo_lote if lote else None
-
+    stock_disponible = producto.stock_total
+    
+    # ⭐ SI NO HAY STOCK, redirigir con parámetro
+    if stock_disponible <= 0:
+        return redirect(f"{reverse('productos:producto')}?sin_stock={producto_id}&nombre={producto.nombProduc}")
+    
     if producto_id_str in carrito:
-        carrito[producto_id_str]["cantidad"] += 1
+        cantidad_actual = carrito[producto_id_str]["cantidad"]
+        
+        # ⭐ VERIFICAR STOCK antes de agregar
+        if cantidad_actual < stock_disponible:
+            carrito[producto_id_str]["cantidad"] += 1
+            carrito[producto_id_str]["stock"] = stock_disponible
+        else:
+            return redirect(f"{reverse('productos:producto')}?stock_maximo={producto_id}&nombre={producto.nombProduc}&carrito=1")
+        
         if not carrito[producto_id_str].get("lote"):
             carrito[producto_id_str]["lote"] = lote_codigo
     else:
@@ -45,12 +40,13 @@ def agregarAlCarrito(request, producto_id):
             "precio": float(producto.precio),
             "nombProduc": producto.nombProduc,
             "imgProduc": producto.imgProduc.url,
-            "lote": lote_codigo
+            "lote": lote_codigo,
+            "stock": stock_disponible
         }
-
+    
     request.session["carrito"] = carrito
     request.session.modified = True
-
+    
     return redirect(f"{reverse('productos:producto')}?carrito=1")
 
 def eliminar(request, producto_id):
@@ -124,3 +120,24 @@ def cargar_carrito_usuario(request, usuario):
 
     request.session["carrito"] = carrito
     request.session.modified = True
+
+def actualizar_stock_carrito(request):
+    """Actualiza el stock de todos los productos en el carrito"""
+    carrito = request.session.get("carrito", {})
+    
+    for producto_id_str, item in carrito.items():
+        try:
+            producto = Producto.objects.get(id=int(producto_id_str))
+            stock_disponible = producto.stock_total
+            
+            # ⭐ Agregar o actualizar el campo stock
+            carrito[producto_id_str]["stock"] = stock_disponible
+            
+            print(f"✅ Actualizado stock para {producto.nombProduc}: {stock_disponible}")
+        except Producto.DoesNotExist:
+            print(f"⚠️ Producto {producto_id_str} no existe, se eliminará del carrito")
+            del carrito[producto_id_str]
+    
+    request.session["carrito"] = carrito
+    request.session.modified = True
+    return carrito

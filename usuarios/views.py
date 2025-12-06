@@ -10,6 +10,7 @@ from django.utils import timezone
 from .models import Devolucion, HistorialDevolucion
 
 # ====================== VISTAS DE DEVOLUCIONES (ADMIN) ======================
+# ====================== VISTAS DE DEVOLUCIONES (ADMIN) ======================
 @login_required
 def gst_devoluciones(request):
     """Vista para que el admin gestione todas las devoluciones"""
@@ -153,54 +154,6 @@ def aprobar_devolucion(request, devolucion_id):
         else:
             mensaje_reemplazo = "Se gestionará el envío del reemplazo"
         
-        # === ENVIAR EMAIL AL CLIENTE ===
-        try:
-            from django.core.mail import send_mail
-            from django.conf import settings
-            
-            # Obtener nombre del usuario
-            nombre_usuario = devolucion.usuario.nombre if devolucion.usuario.nombre else devolucion.usuario.email.split('@')[0]
-            
-            asunto = f'Devolución #{devolucion.id} aprobada - {producto.nombProduc if hasattr(producto, "nombProduc") else str(producto)}'
-            
-            mensaje = f"""
-Hola {nombre_usuario},
-
-Tu devolución del producto "{producto.nombProduc if hasattr(producto, "nombProduc") else str(producto)}" ha sido APROBADA.
-
-DETALLES DE LA DEVOLUCIÓN:
-- Devolución #: {devolucion.id}
-- Producto: {producto.nombProduc if hasattr(producto, "nombProduc") else str(producto)}
-- Unidad: {devolucion.unidad}
-- Motivo: {devolucion.motivo}
-- Fecha de aprobación: {devolucion.fecha_respuesta.strftime('%d/%m/%Y %H:%M')}
-
-REEMPLAZO:
-{mensaje_reemplazo}
-
-Pronto recibirás tu producto de reemplazo{f' (Lote: {lote_reemplazo.codigo_lote or lote_reemplazo.id}, Vencimiento: {lote_reemplazo.fecha_caducidad.strftime("%d/%m/%Y")})' if lote_reemplazo else ''}.
-
-Gracias por tu confianza.
-
----
-Este es un correo automático.
-            """.strip()
-            
-            # Verificar que el usuario tenga email
-            if devolucion.usuario.email:
-                send_mail(
-                    subject=asunto,
-                    message=mensaje,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[devolucion.usuario.email],
-                    fail_silently=True
-                )
-            else:
-                print(f"Usuario {devolucion.usuario.nombre} no tiene email configurado")
-            
-        except Exception as e:
-            print(f"Error al enviar email: {str(e)}")
-        
         # Respuesta AJAX final
         return JsonResponse({
             'success': True,
@@ -218,30 +171,66 @@ Este es un correo automático.
 def rechazar_devolucion(request, devolucion_id):
     if not request.user.is_staff and not request.user.is_superuser:
         return JsonResponse({'success': False, 'error': "No tienes permisos."}, status=403)
-
+    
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+    
     try:
+        # ✅ Intentar primero con POST
+        motivo_rechazo = request.POST.get('motivo_rechazo', '').strip()
+        
+        # Si no viene en POST, intentar con JSON
+        if not motivo_rechazo:
+            import json
+            try:
+                data = json.loads(request.body.decode('utf-8'))
+                motivo_rechazo = data.get('motivo_rechazo', '').strip()
+            except:
+                pass
+        
+        # Validar que se haya proporcionado un motivo
+        if not motivo_rechazo:
+            return JsonResponse({
+                'success': False, 
+                'error': 'Debe proporcionar un motivo de rechazo'
+            }, status=400)
+        
+        # Obtener la devolución
         devolucion = Devolucion.objects.get(id=devolucion_id)
+        
+        # Actualizar el estado y guardar el motivo de rechazo
         devolucion.estado = 'Rechazada'
         devolucion.fecha_respuesta = timezone.now()
+        devolucion.motivo_rechazo = motivo_rechazo
         devolucion.save()
-
+        
+        # Registrar en el historial
         HistorialDevolucion.objects.create(
             devolucion=devolucion,
             estado='Rechazada',
             usuario_admin=request.user,
-            comentario='Rechazada por admin'
+            comentario=f'Rechazada. Motivo: {motivo_rechazo}'
         )
-
+        
         return JsonResponse({
             'success': True,
             'id': devolucion_id,
-            'mensaje': f"Devolución #{devolucion_id} rechazada"
+            'mensaje': f"Devolución #{devolucion_id} rechazada correctamente"
         })
-
+        
     except Devolucion.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Devolución no encontrada'}, status=404)
+        return JsonResponse({
+            'success': False, 
+            'error': 'Devolución no encontrada'
+        }, status=404)
     except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+        print(f"Error en rechazar_devolucion: {str(e)}")
+        import traceback
+        traceback.print_exc()  # Esto te dará más detalles del error
+        return JsonResponse({
+            'success': False, 
+            'error': str(e)
+        }, status=500)
     
 def historial_devoluciones(request):
     """Vista para mostrar el historial de devoluciones (solo Aprobadas o Rechazadas)."""

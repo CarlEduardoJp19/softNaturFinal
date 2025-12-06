@@ -21,6 +21,7 @@ from .views_refactored.carrito_views import (
     agregarAlCarrito,
     restar_producto,
     limpiar,
+    actualizar_stock_carrito,
 )
 from .views_refactored.producto_views import (
     productos,
@@ -46,6 +47,7 @@ urlpatterns = [
     path('agregar/<int:producto_id>/', agregarAlCarrito, name="agregar"),
     path('restar/<int:producto_id>/', restar_producto, name='restar'),
     path('limpiar/', limpiar, name="limpiar"),
+    path('actualizar-stock-carrito/', actualizar_stock_carrito, name='actualizar_stock_carrito'),
     
     # ============ ADMIN - PRODUCTOS ============
     path('agregar_producto/', agregar_producto, name="agregar_producto"),
